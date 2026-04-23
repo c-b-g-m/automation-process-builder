@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CUSTOMIZE: Update title and description with your brand -->
+  <title>Automation Process Builder</title>
+  <meta name="description" content="Document your automation in 8 questions and get a structured playbook, tool recommendations, and starter AI prompts." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23A07AFF'/%3E%3Cstop offset='100%25' stop-color='%2300DCB4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='18,2 8,18 15,18 14,30 24,14 17,14' fill='url(%23g)'/%3E%3C/svg%3E" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Barlow:wght@300;400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- All styles are self-contained below — no external CSS needed -->
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* fallback vars in case shared.css doesn't load */
+      --bg: #06060F;
+      --bg-2: #09091A;
+      --bg-card: #0C0C1E;
+      --border: rgba(255,255,255,0.07);
+      --border-2: rgba(255,255,255,0.04);
+      --violet: #A07AFF;
+      --teal: #00DCB4;
+      --violet-dim: rgba(160,122,255,0.6);
+      --teal-dim: rgba(0,220,180,0.5);
+      --cream: #EEF0FF;
+      --cream-dim: rgba(238,240,255,0.7);
+      --muted: rgba(238,240,255,0.45);
+      --aurora: linear-gradient(90deg, #A07AFF 0%, #00DCB4 100%);
+      --aurora-diag: linear-gradient(135deg, #8050FF 0%, #00DCB4 100%);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(6, 6, 15, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .nav-logo {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-logo em {
+      font-style: italic;
+      background: var(--aurora);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-back {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--cream); }
+
+    /* ── Main content ── */
+    main {
+      padding-top: 68px;
+    }
+
+    /* ── Section spacing ── */
+    .section {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .section--wide {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 96px 24px 72px;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .overline {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 20px;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--cream-dim);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* ── Buttons ── */
+    .btn-aurora {
+      display: inline-block;
+      background: var(--aurora);
+      color: #06060F;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-aurora:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-aurora:active { transform: translateY(0); }
+
+    .btn-outline {
+      display: inline-block;
+      background: transparent;
+      color: var(--cream-dim);
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 11px 24px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-outline:hover { border-color: var(--violet-dim); color: var(--cream); }
+
+    .link-teal {
+      color: var(--teal);
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      border-bottom: 1px solid transparent;
+    }
+
+    .link-teal:hover { border-bottom-color: var(--teal); }
+
+    /* ── Idea Generator ── */
+    .idea-generator-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+
+    .idea-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .idea-panel--hidden {
+      display: none;
+    }
+
+    .idea-panel__inner {
+      padding: 40px;
+    }
+
+    .idea-panel h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .idea-panel__sub {
+      color: var(--cream-dim);
+      margin-bottom: 32px;
+      font-size: 15px;
+    }
+
+    .idea-panel__fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 640px) {
+      .idea-panel__fields { grid-template-columns: 1fr; }
+    }
+
+    .idea-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 768px) {
+      .idea-cards { grid-template-columns: 1fr; }
+    }
+
+    .idea-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .idea-card h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .idea-card p {
+      color: var(--cream-dim);
+      font-size: 13px;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .idea-card .btn-use {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: none;
+      border: 1px solid var(--teal-dim);
+      border-radius: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .idea-card .btn-use:hover {
+      background: rgba(0, 220, 180, 0.08);
+    }
+
+    /* ── Form elements ── */
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width: 100%;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--violet);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.6;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(238,240,255,0.45)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #0C0C1E;
+      color: var(--cream);
+    }
+
+    .field-error {
+      display: none;
+      font-size: 12px;
+      color: #FFB347;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .field-error--visible {
+      display: block;
+    }
+
+    .field--invalid input,
+    .field--invalid textarea,
+    .field--invalid select {
+      border-color: rgba(255,179,71,0.5);
+    }
+
+    /* ── Wizard ── */
+    .wizard-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 72px;
+    }
+
+    .wizard-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+    }
+
+    .wizard-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .wizard-progress__label {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .wizard-progress__bar {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .wizard-progress__fill {
+      height: 100%;
+      background: var(--aurora);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    .wizard-step {
+      display: none;
+    }
+
+    .wizard-step--active {
+      display: block;
+    }
+
+    .wizard-step h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .wizard-step__desc {
+      color: var(--cream-dim);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .wizard-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-2);
+    }
+
+    .wizard-nav .btn-back {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+
+    .wizard-nav .btn-back:hover { color: var(--cream); }
+
+    /* ── Step 4 — repeating steps ── */
+    .process-steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .process-step-block {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .process-step-block__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .process-step-block__num {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--aurora);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .process-step-block__delete {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .process-step-block__delete:hover {
+      border-color: rgba(255,100,100,0.4);
+      color: rgba(255,120,120,0.9);
+    }
+
+    .process-step-block .field-group { margin-bottom: 12px; }
+    .process-step-block .field-group:last-child { margin-bottom: 0; }
+
+    .process-step-block__fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .process-step-block__fields { grid-template-columns: 1fr; }
+    }
+
+    .btn-add-step {
+      background: none;
+      border: 1px dashed var(--violet-dim);
+      color: var(--violet);
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn-add-step:hover { background: rgba(160,122,255,0.06); }
+
+    /* ── Email Gate ── */
+    .output-container {
+      position: relative;
+    }
+
+    .email-gate-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 60px;
+      background: linear-gradient(to bottom, rgba(6,6,15,0.1) 0%, rgba(6,6,15,0.92) 30%, rgba(6,6,15,0.98) 100%);
+      border-radius: 12px;
+    }
+
+    .email-gate-overlay--hidden {
+      display: none;
+    }
+
+    .email-gate-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .email-gate-card h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .email-gate-card p {
+      color: var(--cream-dim);
+      margin-bottom: 28px;
+      font-size: 14px;
+    }
+
+    .email-gate-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 500px) {
+      .email-gate-fields { grid-template-columns: 1fr; }
+    }
+
+    /* ── Output section ── */
+    .output-section {
+      display: none;
+    }
+
+    .output-section--visible {
+      display: block;
+    }
+
+    .output-blurred {
+      filter: blur(6px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .output-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 72px;
+    }
+
+    .output-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    .output-header h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 28px;
+    }
+
+    .output-header__task-name {
+      display: block;
+      background: var(--aurora);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 22px;
+      margin-top: 4px;
+    }
+
+    .output-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* ── Process document card ── */
+    .process-doc {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px;
+      margin-bottom: 28px;
+    }
+
+    .doc-section {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-2);
+    }
+
+    .doc-section:first-child { padding-top: 0; }
+    .doc-section:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .doc-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .doc-value {
+      color: var(--cream);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .doc-value strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    /* ── Step output cards ── */
+    .step-cards-section {
+      margin-bottom: 28px;
+    }
+
+    .step-cards-section h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .step-output-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .step-output-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .step-output-card__num {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      background: var(--aurora);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 40px;
+    }
+
+    .step-output-card__meta { flex: 1; }
+
+    .step-output-card__name {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .step-output-card__who {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .judgment-badge {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+    }
+
+    .judgment-badge--routine {
+      background: rgba(0,220,180,0.1);
+      color: var(--teal);
+      border: 1px solid rgba(0,220,180,0.2);
+    }
+
+    .judgment-badge--judgment {
+      background: rgba(160,122,255,0.1);
+      color: var(--violet);
+      border: 1px solid rgba(160,122,255,0.2);
+    }
+
+    .step-tools {
+      margin-bottom: 20px;
+    }
+
+    .step-tools__label {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .tool-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tool-pill {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      min-width: 140px;
+      max-width: 220px;
+    }
+
+    .tool-pill__name {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 3px;
+    }
+
+    .tool-pill__rationale {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ── Starter prompt ── */
+    .starter-prompt {
+      margin-top: 4px;
+    }
+
+    .starter-prompt__toggle {
+      background: none;
+      border: none;
+      color: var(--violet);
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .starter-prompt__toggle:hover { opacity: 0.75; }
+
+    .starter-prompt__label {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .starter-prompt__body {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .starter-prompt__body--open { display: block; }
+
+    .prompt-block {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-family: 'Barlow', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--cream-dim);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .btn-copy-prompt {
+      margin-top: 10px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 7px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-copy-prompt:hover { border-color: var(--violet-dim); color: var(--violet); }
+    .btn-copy-prompt.copied { color: var(--teal); border-color: var(--teal-dim); }
+
+    /* ── Next steps checklist ── */
+    .next-steps {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+
+    .next-steps h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--cream-dim);
+    }
+
+    .checklist__box {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Footer CTA ── */
+    .footer-cta {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-cta p {
+      font-size: 16px;
+      color: var(--cream-dim);
+    }
+
+    .aurora-link {
+      background: var(--aurora);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 1px solid rgba(160,122,255,0.3);
+      transition: border-color 0.2s;
+    }
+
+    .aurora-link:hover { border-color: rgba(0,220,180,0.5); }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 16, 0, 0.95);
+      border: 1px solid rgba(255,179,71,0.3);
+      color: #FFB347;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 12px 20px;
+      border-radius: 6px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast--visible { opacity: 1; }
+
+    /* ── Page footer ── */
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .page-footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .page-footer a:hover { color: var(--cream); }
+
+    /* ── Hidden utility ── */
+    .hidden { display: none !important; }
+
+    /* ── Mobile ── */
+    @media (max-width: 767px) {
+      .nav { padding: 0 16px; }
+      .hero { padding: 72px 16px 48px; }
+      .wizard-card { padding: 24px 20px; }
+      .idea-panel__inner { padding: 24px 20px; }
+      .process-doc { padding: 24px 20px; }
+      .step-output-card { padding: 20px; }
+      .output-header { flex-direction: column; }
+      .output-actions { width: 100%; justify-content: flex-start; }
+      .footer-cta { flex-direction: column; }
+      .section { padding: 48px 16px; }
+      .section--wide { padding: 48px 16px; }
+      .wizard-wrapper { padding: 0 16px 48px; }
+      .idea-generator-wrapper { padding: 0 16px 32px; }
+      .output-inner { padding: 0 16px 48px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <!-- CUSTOMIZE: Replace with your brand name. The <em> tag applies the aurora gradient style. -->
+  <a href="/" class="nav-logo">Automation <em>Process</em> Builder</a>
+  <!-- CUSTOMIZE: Update href to your site, or remove this link entirely -->
+  <a href="/" class="nav-back">← Back to site</a>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <p class="overline">Automation Process Builder</p>
+    <h1>Document your automation. Get a playbook.</h1>
+    <p class="hero-sub">Walk through 8 questions. We'll map the steps, recommend the tools, and write your starter prompts.</p>
+    <div class="hero-actions">
+      <a href="#wizard" class="btn-aurora" onclick="scrollToWizard(event)">Start building →</a>
+      <a href="#idea-generator" class="link-teal" onclick="showIdeaGenerator(event)">Not sure what to automate? Get ideas first →</a>
+    </div>
+  </section>
+
+  <!-- ── Idea Generator ── -->
+  <div class="idea-generator-wrapper">
+    <div id="idea-generator" class="idea-panel idea-panel--hidden" aria-label="Idea generator">
+      <div class="idea-panel__inner">
+        <h2>Find your automation idea</h2>
+        <p class="idea-panel__sub">Answer 2 quick questions and we'll suggest 3 automations worth building.</p>
+
+        <div class="idea-panel__fields">
+          <div class="field-group">
+            <label for="idea-role">What's your role or function?</label>
+            <select id="idea-role">
+              <option value="">Select your role…</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Sales">Sales</option>
+              <option value="RevOps">RevOps</option>
+              <option value="Customer Success">Customer Success</option>
+              <option value="Support">Support</option>
+              <option value="Operations">Operations</option>
+              <option value="Admin">Admin</option>
+              <option value="HR">HR</option>
+              <option value="People Ops">People Ops</option>
+              <option value="Finance">Finance</option>
+              <option value="Other">Other</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="idea-timesink">What's your biggest recurring time sink right now?</label>
+            <textarea id="idea-timesink" placeholder="e.g., I manually pull data from three tools every Monday to build a report" rows="3"></textarea>
+          </div>
+        </div>
+
+        <button class="btn-aurora" onclick="generateIdeas()">Show me ideas →</button>
+
+        <div id="idea-cards-container" class="idea-cards hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Wizard ── -->
+  <div class="wizard-wrapper" id="wizard-anchor">
+    <div id="wizard" class="wizard-card">
+      <!-- Progress bar -->
+      <div class="wizard-progress">
+        <span class="wizard-progress__label" id="progress-label">Step 1 of 8</span>
+        <div class="wizard-progress__bar">
+          <div class="wizard-progress__fill" id="progress-fill" style="width: 12.5%"></div>
+        </div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="wizard-step wizard-step--active" id="step-1">
+        <h2>What is this task?</h2>
+        <p class="wizard-step__desc">Give the task a name and describe what it does in practice.</p>
+
+        <div class="field-group" id="fg-task-name">
+          <label for="task-name">Task name</label>
+          <input type="text" id="task-name" placeholder='e.g., "Weekly pipeline report"' />
+          <p class="field-error" id="err-task-name">Give this task a specific name — what exactly does it do? 'Report' is too vague. Try something like 'Weekly HubSpot Pipeline Summary.'</p>
+        </div>
+
+        <div class="field-group" id="fg-task-desc">
+          <label for="task-desc">Task description</label>
+          <textarea id="task-desc" rows="4" placeholder='e.g., "Every Monday I pull data from HubSpot, paste it into a Google Sheet, and email a summary to my manager"'></textarea>
+          <p class="field-error" id="err-task-desc">Describe what actually happens when you do this task. Include the tools you use and what you do with the data.</p>
+        </div>
+
+        <div class="wizard-nav">
+          <span></span>
+          <button class="btn-aurora" onclick="nextStep(1)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="wizard-step" id="step-2">
+        <h2>What triggers it?</h2>
+        <p class="wizard-step__desc">Tell us how and when this task gets started.</p>
+
+        <div class="field-group" id="fg-trigger-type">
+          <label for="trigger-type">How does this task get started?</label>
+          <select id="trigger-type" onchange="updateTriggerPlaceholder()">
+            <option value="">Select trigger type…</option>
+            <option value="time-based">Time-based (runs on a schedule)</option>
+            <option value="event-based">Event-based (something happens that kicks it off)</option>
+            <option value="manually-triggered">Manually triggered (you decide when to run it)</option>
+          </select>
+          <p class="field-error" id="err-trigger-type">Select how this task gets started.</p>
+        </div>
+
+        <div class="field-group" id="fg-trigger-desc">
+          <label for="trigger-desc">Describe the trigger specifically</label>
+          <input type="text" id="trigger-desc" placeholder='e.g., "Every Monday at 8am" or "On the 1st of each month"' />
+          <p class="field-error" id="err-trigger-desc">Be specific about the trigger. What exact event, time, or condition starts this?</p>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(2)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(2)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="wizard-step" id="step-3">
+        <h2>What does it need to start?</h2>
+        <p class="wizard-step__desc">List the inputs, data sources, and tools this task requires.</p>
+
+        <div class="field-group" id="fg-inputs">
+          <label for="task-inputs">What information or data does this task need to run? Include where it comes from.</label>
+          <textarea id="task-inputs" rows="5" placeholder='e.g., "Deal data from HubSpot (filtered by close date this week), the rep name from the Deals record, and the Google Sheet where summaries are logged"'></textarea>
+          <p class="field-error" id="err-inputs">What tools or files does this start from? Name them specifically — Google Sheets, HubSpot, a CSV file, a Slack message, etc.</p>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(3)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(3)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="wizard-step" id="step-4">
+        <h2>Walk through the steps</h2>
+        <p class="wizard-step__desc">Break this task into individual steps. Add them one at a time. Be specific — each step should be one action.</p>
+
+        <div class="process-steps-list" id="process-steps-list"></div>
+
+        <button class="btn-add-step" onclick="addProcessStep()">+ Add a step</button>
+
+        <p class="field-error" id="err-steps" style="margin-top: 12px;">Add at least 2 steps. Most tasks have 3–6 discrete steps — what comes before and after?</p>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(4)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(4)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="wizard-step" id="step-5">
+        <h2>What does it produce?</h2>
+        <p class="wizard-step__desc">Describe the output — its format and where it ends up.</p>
+
+        <div class="field-group" id="fg-output">
+          <label for="task-output">What does this task produce when it's done? Describe the output, its format, and where it goes.</label>
+          <textarea id="task-output" rows="5" placeholder='e.g., "A formatted email with a table of this week&apos;s closed deals, sent to my manager via Gmail. Also a new row added to the Weekly Summaries tab in Google Sheets."'></textarea>
+          <p class="field-error" id="err-output">Name the output format (email, Slack message, Google Doc, spreadsheet row, PDF) and where it goes.</p>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(5)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(5)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="wizard-step" id="step-6">
+        <h2>What does "done well" look like?</h2>
+        <p class="wizard-step__desc">Define success in specific, observable terms.</p>
+
+        <div class="field-group" id="fg-success">
+          <label for="success-criteria">How do you know this task was done correctly? Describe what good looks like in specific, observable terms.</label>
+          <textarea id="success-criteria" rows="5" placeholder='e.g., "The email is sent by 8am every Monday. The deal count matches HubSpot. No deals are missing or duplicated."'></textarea>
+          <p class="field-error" id="err-success">This needs to be specific enough that someone else could check it. What would you actually look at to know it worked?</p>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(6)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(6)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="wizard-step" id="step-7">
+        <h2>How often does this run?</h2>
+        <p class="wizard-step__desc">Tell us the cadence.</p>
+
+        <div class="field-group" id="fg-frequency">
+          <label for="frequency">How often does this task need to run?</label>
+          <select id="frequency">
+            <option value="">Select frequency…</option>
+            <option value="Multiple times per day">Multiple times per day</option>
+            <option value="Daily">Daily</option>
+            <option value="A few times per week">A few times per week</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+            <option value="As needed (ad hoc)">As needed (ad hoc)</option>
+          </select>
+          <p class="field-error" id="err-frequency">Select how often this task runs.</p>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(7)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(7)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 8 -->
+      <div class="wizard-step" id="step-8">
+        <h2>What's the cost if it goes wrong?</h2>
+        <p class="wizard-step__desc">Understanding the failure risk helps us calibrate your automation advice.</p>
+
+        <div class="field-group" id="fg-failure-cost">
+          <label for="failure-cost">What happens if this automation fails or produces a wrong result?</label>
+          <select id="failure-cost">
+            <option value="">Select consequence level…</option>
+            <option value="No real consequence — easy to catch and fix">No real consequence — easy to catch and fix</option>
+            <option value="Minor inconvenience — some extra manual work">Minor inconvenience — some extra manual work</option>
+            <option value="Work gets redone — costs time but nothing critical">Work gets redone — costs time but nothing critical</option>
+            <option value="Client or stakeholder sees it — reputation or relationship impact">Client or stakeholder sees it — reputation or relationship impact</option>
+            <option value="Compliance or legal risk — regulatory, financial, or contractual consequence">Compliance or legal risk — regulatory, financial, or contractual consequence</option>
+          </select>
+          <p class="field-error" id="err-failure-cost">Select the consequence level if this automation fails.</p>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn-back" onclick="prevStep(8)">← Back</button>
+          <button class="btn-aurora" onclick="nextStep(8)">See my playbook →</button>
+        </div>
+      </div>
+
+    </div><!-- /wizard-card -->
+  </div><!-- /wizard-wrapper -->
+
+  <!-- ── Output Section (with email gate) ── -->
+  <div id="output-section-wrapper" class="wizard-wrapper hidden">
+    <div class="output-container">
+      <!-- Email gate overlay -->
+      <div id="email-gate-overlay" class="email-gate-overlay">
+        <div class="email-gate-card">
+          <h2>Your playbook is ready.</h2>
+          <p>Enter your name and email to reveal it.</p>
+          <div class="email-gate-fields">
+            <div class="field-group" id="fg-gate-name">
+              <label for="gate-name">First name</label>
+              <input type="text" id="gate-name" placeholder="First name" />
+              <p class="field-error" id="err-gate-name">Please enter your first name.</p>
+            </div>
+            <div class="field-group" id="fg-gate-email">
+              <label for="gate-email">Work email</label>
+              <input type="email" id="gate-email" placeholder="Work email" />
+              <p class="field-error" id="err-gate-email">Please enter a valid email address.</p>
+            </div>
+          </div>
+          <button class="btn-aurora" style="width:100%;" onclick="submitGate()">Show my playbook →</button>
+        </div>
+      </div>
+
+      <!-- Actual output (blurred until gate passed) -->
+      <div id="output-content" class="output-blurred">
+        <div class="output-inner">
+          <div class="output-header">
+            <div>
+              <h2>Your Automation Playbook<span class="output-header__task-name" id="out-task-name"></span></h2>
+            </div>
+            <div class="output-actions">
+              <button class="btn-outline" onclick="copyPlaybook()">Copy playbook</button>
+              <button class="btn-outline" onclick="window.print()">Print</button>
+            </div>
+          </div>
+
+          <!-- Process document -->
+          <div class="process-doc" id="process-doc">
+            <div class="doc-section">
+              <p class="doc-label">Task</p>
+              <p class="doc-value" id="doc-task"></p>
+            </div>
+            <div class="doc-section">
+              <p class="doc-label">Trigger</p>
+              <p class="doc-value" id="doc-trigger"></p>
+            </div>
+            <div class="doc-section">
+              <p class="doc-label">Inputs Required</p>
+              <p class="doc-value" id="doc-inputs"></p>
+            </div>
+            <div class="doc-section">
+              <p class="doc-label">Process Steps</p>
+              <p class="doc-value" id="doc-steps-summary"></p>
+            </div>
+            <div class="doc-section">
+              <p class="doc-label">Output</p>
+              <p class="doc-value" id="doc-output"></p>
+            </div>
+            <div class="doc-section">
+              <p class="doc-label">Success Criteria</p>
+              <p class="doc-value" id="doc-success"></p>
+            </div>
+            <div class="doc-section">
+              <p class="doc-label">Operational Details</p>
+              <p class="doc-value" id="doc-ops"></p>
+            </div>
+          </div>
+
+          <!-- Step cards -->
+          <div class="step-cards-section">
+            <h3>Process Steps — Detail</h3>
+            <div id="step-cards-container"></div>
+          </div>
+
+          <!-- Next steps checklist -->
+          <div class="next-steps">
+            <h3>Next Steps</h3>
+            <ul class="checklist">
+              <li><span class="checklist__box"></span><span>Map each "fully routine" step to an automation platform</span></li>
+              <li><span class="checklist__box"></span><span>For each "fully judgment" step, decide: keep human in the loop, or use AI with review</span></li>
+              <li><span class="checklist__box"></span><span>Identify the first step to automate — build it this week</span></li>
+              <li><span class="checklist__box"></span><span>Set up error alerting so failures don't go unnoticed</span></li>
+              <li><span class="checklist__box"></span><span>Do one test run manually before going live</span></li>
+            </ul>
+          </div>
+
+          <!-- CUSTOMIZE: Update or remove this footer CTA -->
+          <div class="footer-cta">
+            <p>Keep building? Share this tool with your team.</p>
+            <a href="https://github.com/c-b-g-m/automation-process-builder" class="aurora-link">Get the source code →</a>
+          </div>
+        </div>
+      </div>
+    </div><!-- /output-container -->
+  </div><!-- /output-section-wrapper -->
+
+</main>
+
+<!-- Toast -->
+<div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+<!-- Page footer -->
+<footer class="page-footer">
+  <!-- CUSTOMIZE: Update with your name/brand and year -->
+  <p>© 2026 Your Name or Brand</p>
+</footer>
+
+<script>
+// ─── Supabase config — replace with your project values ───
+// REQUIRED: Replace these with your own Supabase project credentials.
+// See README.md → Step 2 for instructions on creating the Supabase table.
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+// ─── Supabase client ───
+let supabaseClient = null;
+try {
+  if (SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL' && typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch(e) { /* non-blocking */ }
+
+// ─── Wizard state ───
+const state = {
+  currentStep: 1,
+  totalSteps: 8,
+  taskName: '',
+  taskDescription: '',
+  triggerType: '',
+  triggerDescription: '',
+  inputs: '',
+  processSteps: [],   // [{name, who, judgment}]
+  output: '',
+  successCriteria: '',
+  frequency: '',
+  failureCost: '',
+  ideaCardUsed: false,
+  ideaCardRole: null,
+  userName: '',
+  userEmail: ''
+};
+
+// ─── URL / UTM utils ───
+function getUTM(param) {
+  return new URLSearchParams(window.location.search).get(param) || null;
+}
+
+// ─── Scroll helpers ───
+function scrollToWizard(e) {
+  e && e.preventDefault();
+  document.getElementById('wizard-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showIdeaGenerator(e) {
+  e && e.preventDefault();
+  const panel = document.getElementById('idea-generator');
+  panel.classList.remove('idea-panel--hidden');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Progress bar ───
+function updateProgress() {
+  const pct = (state.currentStep / state.totalSteps) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `Step ${state.currentStep} of ${state.totalSteps}`;
+}
+
+// ─── Show/hide steps ───
+function showStep(n) {
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step--active'));
+  document.getElementById('step-' + n).classList.add('wizard-step--active');
+  state.currentStep = n;
+  updateProgress();
+  document.getElementById('wizard-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function prevStep(currentN) {
+  if (currentN > 1) showStep(currentN - 1);
+}
+
+// ─── Validation helpers ───
+function showError(fieldGroupId, errorId) {
+  document.getElementById(fieldGroupId).classList.add('field--invalid');
+  document.getElementById(errorId).classList.add('field-error--visible');
+}
+
+function clearError(fieldGroupId, errorId) {
+  document.getElementById(fieldGroupId).classList.remove('field--invalid');
+  document.getElementById(errorId).classList.remove('field-error--visible');
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function hasMinWords(str, n) {
+  return str.trim().split(/\s+/).filter(w => w.length > 0).length >= n;
+}
+
+function containsToolName(str) {
+  const tools = [
+    'hubspot', 'salesforce', 'google sheets', 'sheets', 'airtable', 'notion',
+    'slack', 'zapier', 'make', 'n8n', 'gmail', 'email', 'form', 'webhook',
+    'typeform', 'jotform', 'stripe', 'quickbooks', 'asana', 'monday', 'trello',
+    'jira', 'github', 'mailchimp', 'activecampaign', 'intercom', 'zendesk',
+    'freshdesk', 'pipedrive', 'zoho', 'salesforce', 'marketo', 'eloqua'
+  ];
+  const lower = str.toLowerCase();
+  return tools.some(t => lower.includes(t));
+}
+
+// ─── Step validation & next ───
+function nextStep(n) {
+  let valid = true;
+
+  if (n === 1) {
+    const name = document.getElementById('task-name').value.trim();
+    const desc = document.getElementById('task-desc').value.trim();
+    if (name.length < 3 || !hasMinWords(name, 2)) {
+      showError('fg-task-name', 'err-task-name'); valid = false;
+    } else { clearError('fg-task-name', 'err-task-name'); }
+    if (desc.length < 30) {
+      showError('fg-task-desc', 'err-task-desc'); valid = false;
+    } else { clearError('fg-task-desc', 'err-task-desc'); }
+    if (valid) {
+      state.taskName = name;
+      state.taskDescription = desc;
+      showStep(2);
+    }
+  }
+
+  else if (n === 2) {
+    const type = document.getElementById('trigger-type').value;
+    const desc = document.getElementById('trigger-desc').value.trim();
+    if (!type) {
+      showError('fg-trigger-type', 'err-trigger-type'); valid = false;
+    } else { clearError('fg-trigger-type', 'err-trigger-type'); }
+
+    if (desc.length < 10) {
+      document.getElementById('err-trigger-desc').textContent = 'Be specific about the trigger. What exact event, time, or condition starts this?';
+      showError('fg-trigger-desc', 'err-trigger-desc'); valid = false;
+    } else if (type === 'event-based' && !containsToolName(desc)) {
+      document.getElementById('err-trigger-desc').textContent = 'Which tool or system fires this event? For example: HubSpot, Google Sheets, Typeform, Slack.';
+      showError('fg-trigger-desc', 'err-trigger-desc'); valid = false;
+    } else { clearError('fg-trigger-desc', 'err-trigger-desc'); }
+
+    if (valid) {
+      state.triggerType = type;
+      state.triggerDescription = desc;
+      showStep(3);
+    }
+  }
+
+  else if (n === 3) {
+    const inputs = document.getElementById('task-inputs').value.trim();
+    if (inputs.length < 30) {
+      showError('fg-inputs', 'err-inputs'); valid = false;
+    } else { clearError('fg-inputs', 'err-inputs'); }
+    if (valid) {
+      state.inputs = inputs;
+      initStepsIfEmpty();
+      showStep(4);
+    }
+  }
+
+  else if (n === 4) {
+    // Collect step data + validate
+    const stepsData = collectStepData();
+    if (stepsData === null) { valid = false; }
+    else if (stepsData.length < 2) {
+      document.getElementById('err-steps').classList.add('field-error--visible'); valid = false;
+    } else {
+      document.getElementById('err-steps').classList.remove('field-error--visible');
+    }
+    if (valid) {
+      state.processSteps = stepsData;
+      showStep(5);
+    }
+  }
+
+  else if (n === 5) {
+    const output = document.getElementById('task-output').value.trim();
+    if (output.length < 30) {
+      showError('fg-output', 'err-output'); valid = false;
+    } else { clearError('fg-output', 'err-output'); }
+    if (valid) {
+      state.output = output;
+      showStep(6);
+    }
+  }
+
+  else if (n === 6) {
+    const success = document.getElementById('success-criteria').value.trim();
+    if (success.length < 30) {
+      showError('fg-success', 'err-success'); valid = false;
+    } else { clearError('fg-success', 'err-success'); }
+    if (valid) {
+      state.successCriteria = success;
+      showStep(7);
+    }
+  }
+
+  else if (n === 7) {
+    const freq = document.getElementById('frequency').value;
+    if (!freq) {
+      showError('fg-frequency', 'err-frequency'); valid = false;
+    } else { clearError('fg-frequency', 'err-frequency'); }
+    if (valid) {
+      state.frequency = freq;
+      showStep(8);
+    }
+  }
+
+  else if (n === 8) {
+    const failCost = document.getElementById('failure-cost').value;
+    if (!failCost) {
+      showError('fg-failure-cost', 'err-failure-cost'); valid = false;
+    } else { clearError('fg-failure-cost', 'err-failure-cost'); }
+    if (valid) {
+      state.failureCost = failCost;
+      showOutputGate();
+    }
+  }
+}
+
+// ─── Trigger placeholder ───
+function updateTriggerPlaceholder() {
+  const type = document.getElementById('trigger-type').value;
+  const input = document.getElementById('trigger-desc');
+  const placeholders = {
+    'time-based': '"Every Monday at 8am" or "On the 1st of each month"',
+    'event-based': '"When a new row is added to a Google Sheet" or "When a form is submitted in HubSpot"',
+    'manually-triggered': '"When I decide to send the weekly update" or "Before each client meeting"'
+  };
+  input.placeholder = placeholders[type] || 'Describe the trigger specifically…';
+}
+
+// ─── Step 4 — process steps ───
+function initStepsIfEmpty() {
+  if (document.getElementById('process-steps-list').children.length === 0) {
+    addProcessStep();
+    addProcessStep();
+  }
+}
+
+let stepIdCounter = 0;
+
+function addProcessStep() {
+  stepIdCounter++;
+  const id = stepIdCounter;
+  const list = document.getElementById('process-steps-list');
+  const stepNum = list.children.length + 1;
+
+  const block = document.createElement('div');
+  block.className = 'process-step-block';
+  block.dataset.stepId = id;
+  block.innerHTML = `
+    <div class="process-step-block__header">
+      <span class="process-step-block__num">Step ${stepNum}</span>
+      <button class="process-step-block__delete" onclick="removeProcessStep(${id})" title="Remove step" aria-label="Remove step ${stepNum}">×</button>
+    </div>
+    <div class="field-group fg-step-name-${id}">
+      <label>What happens in this step?</label>
+      <input type="text" class="step-name-input" data-step="${id}" placeholder='e.g., "Pull all deals closed this week from HubSpot"' />
+      <p class="field-error err-step-name-${id}">Describe what happens, not just what it is. Start with a verb — 'Pull,' 'Write,' 'Send,' 'Check,' 'Format.'</p>
+    </div>
+    <div class="process-step-block__fields">
+      <div class="field-group fg-step-who-${id}">
+        <label>Who does this right now?</label>
+        <input type="text" class="step-who-input" data-step="${id}" placeholder='e.g., "Me" or "Marketing Manager"' />
+        <p class="field-error err-step-who-${id}">Who is currently responsible for this step?</p>
+      </div>
+      <div class="field-group fg-step-judgment-${id}">
+        <label>How much judgment does this step require?</label>
+        <select class="step-judgment-select" data-step="${id}">
+          <option value="">Select…</option>
+          <option value="fully_judgment">Fully judgment-based (requires human decision-making every time)</option>
+          <option value="mostly_judgment">Mostly judgment (human decides, but follows patterns)</option>
+          <option value="mostly_routine">Mostly routine (follows a pattern with occasional exceptions)</option>
+          <option value="fully_routine">Fully routine (same action every time, no decisions)</option>
+        </select>
+        <p class="field-error err-step-judgment-${id}">Select a judgment level for this step.</p>
+      </div>
+    </div>
+  `;
+  list.appendChild(block);
+  renumberSteps();
+}
+
+function removeProcessStep(id) {
+  const list = document.getElementById('process-steps-list');
+  if (list.children.length <= 2) return; // minimum 2
+  const block = list.querySelector(`[data-step-id="${id}"]`);
+  if (block) { block.remove(); renumberSteps(); }
+}
+
+function renumberSteps() {
+  const list = document.getElementById('process-steps-list');
+  Array.from(list.children).forEach((block, i) => {
+    const label = block.querySelector('.process-step-block__num');
+    if (label) label.textContent = `Step ${i + 1}`;
+  });
+}
+
+function collectStepData() {
+  const list = document.getElementById('process-steps-list');
+  const blocks = Array.from(list.children);
+  let valid = true;
+  const steps = [];
+
+  blocks.forEach(block => {
+    const id = block.dataset.stepId;
+    const nameEl = block.querySelector('.step-name-input');
+    const whoEl = block.querySelector('.step-who-input');
+    const judgmentEl = block.querySelector('.step-judgment-select');
+
+    const name = nameEl ? nameEl.value.trim() : '';
+    const who = whoEl ? whoEl.value.trim() : '';
+    const judgment = judgmentEl ? judgmentEl.value : '';
+
+    // validate name: required, starts with a verb (simple heuristic: length check + no trivial single word)
+    if (!name || name.length < 5 || !hasMinWords(name, 2)) {
+      if (nameEl) {
+        nameEl.closest('.field-group').classList.add('field--invalid');
+        const err = block.querySelector(`.err-step-name-${id}`);
+        if (err) err.classList.add('field-error--visible');
+      }
+      valid = false;
+    } else {
+      if (nameEl) {
+        nameEl.closest('.field-group').classList.remove('field--invalid');
+        const err = block.querySelector(`.err-step-name-${id}`);
+        if (err) err.classList.remove('field-error--visible');
+      }
+    }
+
+    if (!who) {
+      if (whoEl) {
+        whoEl.closest('.field-group').classList.add('field--invalid');
+        const err = block.querySelector(`.err-step-who-${id}`);
+        if (err) err.classList.add('field-error--visible');
+      }
+      valid = false;
+    } else {
+      if (whoEl) {
+        whoEl.closest('.field-group').classList.remove('field--invalid');
+        const err = block.querySelector(`.err-step-who-${id}`);
+        if (err) err.classList.remove('field-error--visible');
+      }
+    }
+
+    if (!judgment) {
+      if (judgmentEl) {
+        judgmentEl.closest('.field-group').classList.add('field--invalid');
+        const err = block.querySelector(`.err-step-judgment-${id}`);
+        if (err) err.classList.add('field-error--visible');
+      }
+      valid = false;
+    } else {
+      if (judgmentEl) {
+        judgmentEl.closest('.field-group').classList.remove('field--invalid');
+        const err = block.querySelector(`.err-step-judgment-${id}`);
+        if (err) err.classList.remove('field-error--visible');
+      }
+    }
+
+    steps.push({ name, who, judgment });
+  });
+
+  return valid ? steps : null;
+}
+
+// ─── Show output gate ───
+function showOutputGate() {
+  const wrapper = document.getElementById('output-section-wrapper');
+  wrapper.classList.remove('hidden');
+  wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Check returning user
+  if (localStorage.getItem('automation_email_captured') === 'true') {
+    const savedName = localStorage.getItem('automation_user_name') || '';
+    state.userName = savedName;
+    revealOutput(true);
+  }
+}
+
+// ─── Email gate submit ───
+async function submitGate() {
+  const name = document.getElementById('gate-name').value.trim();
+  const email = document.getElementById('gate-email').value.trim();
+  let valid = true;
+
+  if (!name) { showError('fg-gate-name', 'err-gate-name'); valid = false; }
+  else { clearError('fg-gate-name', 'err-gate-name'); }
+
+  if (!email || !isValidEmail(email)) { showError('fg-gate-email', 'err-gate-email'); valid = false; }
+  else { clearError('fg-gate-email', 'err-gate-email'); }
+
+  if (!valid) return;
+
+  state.userName = name;
+  state.userEmail = email;
+
+  // Try Supabase — non-blocking
+  let supabaseOk = true;
+  if (supabaseClient) {
+    try {
+      const payload = buildSupabasePayload(name, email);
+      const { error } = await supabaseClient.from('automation_submissions').insert([payload]);
+      if (error) { supabaseOk = false; console.warn('Supabase insert error:', error); }
+    } catch (err) {
+      supabaseOk = false;
+      console.warn('Supabase error:', err);
+    }
+  } else {
+    supabaseOk = false; // not configured yet
+  }
+
+  localStorage.setItem('automation_email_captured', 'true');
+  localStorage.setItem('automation_user_name', name);
+
+  revealOutput(false);
+
+  if (!supabaseOk && SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL') {
+    showToast("We couldn't save your info — your playbook is still ready below.");
+  }
+}
+
+function buildSupabasePayload(name, email) {
+  return {
+    user_name: name,
+    user_email: email,
+    task_name: state.taskName,
+    task_description: state.taskDescription,
+    trigger_type: state.triggerType,
+    trigger_description: state.triggerDescription,
+    inputs: state.inputs,
+    steps: state.processSteps,
+    output: state.output,
+    success_criteria: state.successCriteria,
+    frequency: state.frequency,
+    failure_cost: state.failureCost,
+    idea_card_used: state.ideaCardUsed,
+    idea_card_role: state.ideaCardRole,
+    referrer: document.referrer || null,
+    utm_source: getUTM('utm_source'),
+    utm_medium: getUTM('utm_medium'),
+    utm_campaign: getUTM('utm_campaign')
+  };
+}
+
+function revealOutput(returning) {
+  document.getElementById('email-gate-overlay').classList.add('email-gate-overlay--hidden');
+  document.getElementById('output-content').classList.remove('output-blurred');
+  buildOutput();
+  document.getElementById('output-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Toast ───
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('toast--visible');
+  setTimeout(() => toast.classList.remove('toast--visible'), 5000);
+}
+
+// ─── Tool recommendations ───
+const TOOL_RATIONALE = {
+  'Make': 'Visual workflow builder — best for multi-step automations with branching logic',
+  'Zapier': 'Fastest setup for simple trigger → action flows between popular apps',
+  'n8n': 'Self-hosted option with full code access — best for complex or custom workflows',
+  'Claude API': 'Best for steps that need reading, writing, summarizing, classifying, or judgment calls',
+  'Google Apps Script': 'Free option for Google Workspace automations — triggers, emails, Sheets',
+  'Google Sheets API': 'Direct read/write to Sheets from any automation platform',
+  'Google Docs API': 'Read and write Google Docs programmatically',
+  'Notion API': 'Read and write Notion pages and databases programmatically',
+  'Slack API': 'Send messages, create channels, or respond to Slack events',
+  'HubSpot': 'Native workflow automation — best when the whole process lives in HubSpot',
+  'Gmail API': 'Direct Gmail access for send, read, label, or draft operations',
+  'Airtable': 'Flexible database — read/write records via API or automation platforms',
+  'Make (Notion module)': 'Visual workflow builder — best for multi-step automations with branching logic',
+  'Make (HubSpot module)': 'Visual workflow builder — best for multi-step automations with branching logic',
+  'Make (Slack module)': 'Visual workflow builder — best for multi-step automations with branching logic',
+  'Make (Airtable module)': 'Visual workflow builder — best for multi-step automations with branching logic'
+};
+
+function getToolRationale(toolName) {
+  return TOOL_RATIONALE[toolName] || 'Automation tool — connect it with your other systems';
+}
+
+function recommendTools(step) {
+  const combined = (step.name + ' ' + state.inputs + ' ' + state.taskDescription).toLowerCase();
+  const judgment = step.judgment;
+  const tools = [];
+
+  // Keyword detection
+  if (/google sheets?|spreadsheet/.test(combined)) {
+    tools.push('Google Sheets API'); tools.push('Google Apps Script');
+  }
+  if (/google docs?|document/.test(combined)) {
+    tools.push('Google Docs API'); tools.push('Google Apps Script');
+  }
+  if (/gmail|email/.test(combined)) {
+    tools.push('Gmail API'); tools.push('Google Apps Script');
+  }
+  if (/notion/.test(combined)) {
+    tools.push('Notion API'); tools.push('Make (Notion module)');
+  }
+  if (/hubspot|crm/.test(combined)) {
+    tools.push('HubSpot'); tools.push('Make (HubSpot module)');
+  }
+  if (/slack/.test(combined)) {
+    tools.push('Slack API'); tools.push('Make (Slack module)');
+  }
+  if (/airtable/.test(combined)) {
+    tools.push('Airtable'); tools.push('Make (Airtable module)');
+  }
+  if (/write|draft|summarize|classify|analyze|generate/.test(combined)) {
+    tools.push('Claude API');
+  }
+  if (/zapier/.test(combined)) {
+    tools.push('Zapier');
+  }
+  if (/\bmake\b|integromat/.test(combined)) {
+    tools.push('Make');
+  }
+
+  // Judgment-based additions
+  if (judgment === 'fully_routine' || judgment === 'mostly_routine') {
+    if (tools.length === 0) {
+      // Trigger-based defaults
+      const trigDefaults = {
+        'time-based': ['Make', 'Google Apps Script', 'Zapier'],
+        'event-based': ['Make', 'Zapier', 'n8n'],
+        'manually-triggered': ['Google Apps Script', 'n8n', 'Make']
+      };
+      const defaults = trigDefaults[state.triggerType] || ['Make', 'Zapier', 'n8n'];
+      defaults.forEach(t => tools.push(t));
+    } else {
+      // Ensure at least one integration platform
+      const hasPlatform = tools.some(t => ['Make','Zapier','n8n','Google Apps Script'].includes(t) || t.startsWith('Make ('));
+      if (!hasPlatform) tools.push('Make');
+    }
+    if (judgment === 'mostly_routine') tools.push('Claude API');
+  } else if (judgment === 'mostly_judgment' || judgment === 'fully_judgment') {
+    if (!tools.includes('Claude API')) tools.push('Claude API');
+    const hasPlatform = tools.some(t => ['Make','Zapier','n8n','Google Apps Script'].includes(t) || t.startsWith('Make ('));
+    if (!hasPlatform) tools.push('Make');
+  }
+
+  // Deduplicate, limit to 3
+  const seen = new Set();
+  const unique = [];
+  for (const t of tools) {
+    if (!seen.has(t)) { seen.add(t); unique.push(t); }
+    if (unique.length >= 3) break;
+  }
+  return unique;
+}
+
+// ─── Starter prompt generation ───
+function generateStarterPrompt(step) {
+  const j = step.judgment;
+  if (j === 'fully_routine' || j === 'mostly_routine') {
+    return `You are processing a step in an automated workflow.
+
+Task context: ${state.taskName} — ${state.taskDescription}
+
+Your job in this step: ${step.name}
+
+Input you will receive:
+[PASTE INPUT DATA HERE]
+
+Output required:
+${state.output}
+
+Rules:
+- Do not add information that wasn't provided
+- Follow the exact output format specified above
+- If input is missing required fields, return: "ERROR: missing [field name]"`;
+  } else {
+    return `You are assisting with a step that requires judgment.
+
+Task context: ${state.taskName} — ${state.taskDescription}
+
+This step: ${step.name}
+Success looks like: ${state.successCriteria}
+
+Background and constraints:
+[ADD RELEVANT CONTEXT — who the audience is, what matters, what to avoid]
+
+Input you will receive:
+[PASTE INPUT DATA HERE]
+
+What I need from you:
+[Describe the decision or output needed]
+
+Before responding, flag if anything in the input is ambiguous or missing information needed to complete this step accurately.`;
+  }
+}
+
+function judgmentLabel(j) {
+  const labels = {
+    'fully_routine': 'Fully routine',
+    'mostly_routine': 'Mostly routine',
+    'mostly_judgment': 'Mostly judgment',
+    'fully_judgment': 'Fully judgment-based'
+  };
+  return labels[j] || j;
+}
+
+function isRoutine(j) {
+  return j === 'fully_routine' || j === 'mostly_routine';
+}
+
+// ─── Build output ───
+function buildOutput() {
+  // Header task name
+  document.getElementById('out-task-name').textContent = state.taskName;
+
+  // Process doc
+  document.getElementById('doc-task').innerHTML =
+    `<strong>${escHtml(state.taskName)}</strong><br>${escHtml(state.taskDescription)}`;
+
+  const triggerLabels = {
+    'time-based': 'Time-based',
+    'event-based': 'Event-based',
+    'manually-triggered': 'Manually triggered'
+  };
+  document.getElementById('doc-trigger').innerHTML =
+    `<strong>${triggerLabels[state.triggerType] || state.triggerType}</strong> — ${escHtml(state.triggerDescription)}`;
+
+  document.getElementById('doc-inputs').textContent = state.inputs;
+
+  // Steps summary
+  const stepsSummary = state.processSteps.map((s, i) => `${i+1}. ${s.name}`).join('\n');
+  document.getElementById('doc-steps-summary').innerHTML = stepsSummary.split('\n').map(l => escHtml(l)).join('<br>');
+
+  document.getElementById('doc-output').textContent = state.output;
+  document.getElementById('doc-success').textContent = state.successCriteria;
+  document.getElementById('doc-ops').innerHTML =
+    `<strong>Frequency:</strong> ${escHtml(state.frequency)}<br><strong>If it fails:</strong> ${escHtml(state.failureCost)}`;
+
+  // Step cards
+  const container = document.getElementById('step-cards-container');
+  container.innerHTML = '';
+  state.processSteps.forEach((step, i) => {
+    const tools = recommendTools(step);
+    const prompt = generateStarterPrompt(step);
+    const routine = isRoutine(step.judgment);
+    const promptId = `prompt-body-${i}`;
+    const badgeClass = routine ? 'judgment-badge--routine' : 'judgment-badge--judgment';
+
+    const card = document.createElement('div');
+    card.className = 'step-output-card';
+
+    const toolPillsHtml = tools.map(t => `
+      <div class="tool-pill">
+        <span class="tool-pill__name">${escHtml(t)}</span>
+        <span class="tool-pill__rationale">${escHtml(getToolRationale(t))}</span>
+      </div>`).join('');
+
+    // judgment note for fully_judgment
+    const judgmentNote = step.judgment === 'fully_judgment'
+      ? `<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">This step involves significant judgment. Consider keeping a human in the loop with AI as a review assistant.</p>`
+      : '';
+
+    card.innerHTML = `
+      <div class="step-output-card__header">
+        <div class="step-output-card__num">${i + 1}</div>
+        <div class="step-output-card__meta">
+          <div class="step-output-card__name">${escHtml(step.name)}</div>
+          <div class="step-output-card__who">Currently done by: ${escHtml(step.who)}</div>
+        </div>
+      </div>
+      <span class="judgment-badge ${badgeClass}">${judgmentLabel(step.judgment)}</span>
+      ${judgmentNote}
+      <div class="step-tools">
+        <div class="step-tools__label">Recommended tools</div>
+        <div class="tool-pills">${toolPillsHtml}</div>
+      </div>
+      <div class="starter-prompt">
+        <div class="starter-prompt__label">Starter prompt</div>
+        <button class="starter-prompt__toggle" onclick="togglePrompt('${promptId}', this)" aria-expanded="false">
+          ▶ Show starter prompt
+        </button>
+        <div class="starter-prompt__body" id="${promptId}">
+          <div class="prompt-block" id="${promptId}-text">${escHtml(prompt)}</div>
+          <button class="btn-copy-prompt" onclick="copyPrompt('${promptId}-text', this)">Copy prompt</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function togglePrompt(id, btn) {
+  const body = document.getElementById(id);
+  const isOpen = body.classList.contains('starter-prompt__body--open');
+  body.classList.toggle('starter-prompt__body--open');
+  btn.textContent = isOpen ? '▶ Show starter prompt' : '▼ Hide starter prompt';
+  btn.setAttribute('aria-expanded', !isOpen);
+}
+
+function copyPrompt(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyPlaybook() {
+  const lines = [];
+  lines.push(`AUTOMATION PLAYBOOK — ${state.taskName}`);
+  lines.push('');
+  lines.push('TASK');
+  lines.push(state.taskName);
+  lines.push(state.taskDescription);
+  lines.push('');
+  lines.push('TRIGGER');
+  lines.push(`${state.triggerType}: ${state.triggerDescription}`);
+  lines.push('');
+  lines.push('INPUTS REQUIRED');
+  lines.push(state.inputs);
+  lines.push('');
+  lines.push('PROCESS STEPS');
+  state.processSteps.forEach((s, i) => {
+    lines.push(`${i+1}. ${s.name} (${s.who}) — ${judgmentLabel(s.judgment)}`);
+  });
+  lines.push('');
+  lines.push('OUTPUT');
+  lines.push(state.output);
+  lines.push('');
+  lines.push('SUCCESS CRITERIA');
+  lines.push(state.successCriteria);
+  lines.push('');
+  lines.push('FREQUENCY');
+  lines.push(state.frequency);
+  lines.push('');
+  lines.push('IF IT FAILS');
+  lines.push(state.failureCost);
+  lines.push('');
+  lines.push('—');
+  lines.push('Built with Automation Process Builder — github.com/c-b-g-m/automation-process-builder');
+
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Playbook copied to clipboard.');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Playbook copied to clipboard.');
+  });
+}
+
+// ─── HTML escape ───
+function escHtml(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ─── Idea Generator ───
+const IDEA_DATA = {
+  'Marketing': [
+    {
+      title: 'Weekly Performance Report',
+      desc: 'Pull metrics from Google Analytics, Meta Ads, and LinkedIn into a formatted summary doc every Monday morning',
+      prefillName: 'Weekly Marketing Performance Report',
+      prefillDesc: 'Pull campaign metrics from Google Analytics, Meta Ads, and LinkedIn Ads each Monday and compile into a formatted summary sent to the team by 9am'
+    },
+    {
+      title: 'New Lead Welcome Sequence',
+      desc: 'Trigger a personalized email sequence the moment a form lead hits the CRM',
+      prefillName: 'Lead Welcome Email Sequence',
+      prefillDesc: 'When a new lead is created in HubSpot, send a 3-step email sequence over 7 days with personalized content based on lead source and interest'
+    },
+    {
+      title: 'Social Content Repurposing',
+      desc: 'Turn a published blog post into 5 social media posts across LinkedIn, X, and Instagram',
+      prefillName: 'Blog-to-Social Repurposing Workflow',
+      prefillDesc: 'Take each published blog post and generate 5 platform-specific social posts for LinkedIn, X, and Instagram, formatted and ready to schedule'
+    }
+  ],
+  'Sales': [
+    {
+      title: 'CRM Data Hygiene',
+      desc: 'Detect and flag incomplete or stale CRM records weekly so reps aren\'t working bad data',
+      prefillName: 'CRM Record Hygiene Audit',
+      prefillDesc: 'Scan HubSpot contacts weekly, flag records missing key fields (phone, company, last activity), and send a Slack digest to each rep with their list'
+    },
+    {
+      title: 'Deal Stage Update Notifications',
+      desc: 'Notify the right people in Slack when a deal moves to a new pipeline stage',
+      prefillName: 'Deal Stage Change Alerts',
+      prefillDesc: 'When a deal moves to Proposal or Closed Won in HubSpot, notify the assigned rep and manager in Slack with deal summary and next step'
+    },
+    {
+      title: 'Inbound Lead Routing',
+      desc: 'Score and route inbound leads to the right rep based on company size, industry, and source',
+      prefillName: 'Inbound Lead Scoring and Routing',
+      prefillDesc: 'When a new form lead comes in, score it based on firmographic data, assign it to the right rep in HubSpot, and send them a Slack notification with context'
+    }
+  ],
+  'RevOps': [
+    {
+      title: 'CRM Data Hygiene',
+      desc: 'Detect and flag incomplete or stale CRM records weekly so reps aren\'t working bad data',
+      prefillName: 'CRM Record Hygiene Audit',
+      prefillDesc: 'Scan HubSpot contacts weekly, flag records missing key fields (phone, company, last activity), and send a Slack digest to each rep with their list'
+    },
+    {
+      title: 'Deal Stage Update Notifications',
+      desc: 'Notify the right people in Slack when a deal moves to a new pipeline stage',
+      prefillName: 'Deal Stage Change Alerts',
+      prefillDesc: 'When a deal moves to Proposal or Closed Won in HubSpot, notify the assigned rep and manager in Slack with deal summary and next step'
+    },
+    {
+      title: 'Inbound Lead Routing',
+      desc: 'Score and route inbound leads to the right rep based on company size, industry, and source',
+      prefillName: 'Inbound Lead Scoring and Routing',
+      prefillDesc: 'When a new form lead comes in, score it based on firmographic data, assign it to the right rep in HubSpot, and send them a Slack notification with context'
+    }
+  ],
+  'Customer Success': [
+    {
+      title: 'Churn Risk Alerting',
+      desc: 'Flag accounts that show early churn signals so CSMs can get ahead of it',
+      prefillName: 'Churn Risk Detection and Alert',
+      prefillDesc: 'Monitor product usage data weekly; when an account drops below a usage threshold or hasn\'t logged in for 14 days, alert the CSM via Slack with account context'
+    },
+    {
+      title: 'Support Ticket Triage',
+      desc: 'Categorize and prioritize incoming support tickets before a human touches them',
+      prefillName: 'Incoming Support Ticket Auto-Triage',
+      prefillDesc: 'When a new ticket arrives in the help desk, classify it by type and urgency, assign it to the right team, and draft a first-response suggestion'
+    },
+    {
+      title: 'QBR Prep Package',
+      desc: 'Auto-assemble the account data a CSM needs before a quarterly business review',
+      prefillName: 'QBR Prep Data Assembly',
+      prefillDesc: '48 hours before each QBR, pull health score, usage stats, open tickets, and NPS data into a formatted Google Doc for the CSM'
+    }
+  ],
+  'Support': [
+    {
+      title: 'Churn Risk Alerting',
+      desc: 'Flag accounts that show early churn signals so CSMs can get ahead of it',
+      prefillName: 'Churn Risk Detection and Alert',
+      prefillDesc: 'Monitor product usage data weekly; when an account drops below a usage threshold or hasn\'t logged in for 14 days, alert the CSM via Slack with account context'
+    },
+    {
+      title: 'Support Ticket Triage',
+      desc: 'Categorize and prioritize incoming support tickets before a human touches them',
+      prefillName: 'Incoming Support Ticket Auto-Triage',
+      prefillDesc: 'When a new ticket arrives in the help desk, classify it by type and urgency, assign it to the right team, and draft a first-response suggestion'
+    },
+    {
+      title: 'QBR Prep Package',
+      desc: 'Auto-assemble the account data a CSM needs before a quarterly business review',
+      prefillName: 'QBR Prep Data Assembly',
+      prefillDesc: '48 hours before each QBR, pull health score, usage stats, open tickets, and NPS data into a formatted Google Doc for the CSM'
+    }
+  ],
+  'Operations': [
+    {
+      title: 'Meeting Notes Processing',
+      desc: 'Take raw meeting notes and turn them into a structured summary with action items, owners, and due dates',
+      prefillName: 'Meeting Notes to Action Items',
+      prefillDesc: 'After each meeting, process raw notes into a structured doc: summary, decisions made, action items with owners and due dates, sent to attendees via email'
+    },
+    {
+      title: 'Invoice Status Tracker',
+      desc: 'Check outstanding invoices against payments and flag overdue ones without manual reconciliation',
+      prefillName: 'Invoice Status Monitoring',
+      prefillDesc: 'Each weekday, check open invoices in the billing system against payment records, flag any overdue by more than 7 days, and notify the ops lead via Slack'
+    },
+    {
+      title: 'Vendor Onboarding Checklist',
+      desc: 'Automate the task list and document collection when a new vendor is added',
+      prefillName: 'New Vendor Onboarding Workflow',
+      prefillDesc: 'When a new vendor is added to the system, create a checklist in the project management tool, request required documents via email, and set reminder follow-ups'
+    }
+  ],
+  'Admin': [
+    {
+      title: 'Meeting Notes Processing',
+      desc: 'Take raw meeting notes and turn them into a structured summary with action items, owners, and due dates',
+      prefillName: 'Meeting Notes to Action Items',
+      prefillDesc: 'After each meeting, process raw notes into a structured doc: summary, decisions made, action items with owners and due dates, sent to attendees via email'
+    },
+    {
+      title: 'Invoice Status Tracker',
+      desc: 'Check outstanding invoices against payments and flag overdue ones without manual reconciliation',
+      prefillName: 'Invoice Status Monitoring',
+      prefillDesc: 'Each weekday, check open invoices in the billing system against payment records, flag any overdue by more than 7 days, and notify the ops lead via Slack'
+    },
+    {
+      title: 'Vendor Onboarding Checklist',
+      desc: 'Automate the task list and document collection when a new vendor is added',
+      prefillName: 'New Vendor Onboarding Workflow',
+      prefillDesc: 'When a new vendor is added to the system, create a checklist in the project management tool, request required documents via email, and set reminder follow-ups'
+    }
+  ],
+  'HR': [
+    {
+      title: 'New Hire Onboarding Kickoff',
+      desc: 'Trigger all onboarding tasks and system access when a new hire is confirmed',
+      prefillName: 'New Hire Onboarding Automation',
+      prefillDesc: 'When a new hire is marked active in the HRIS, create their accounts in key tools, assign onboarding tasks, and send welcome email'
+    },
+    {
+      title: 'PTO Request Routing',
+      desc: 'Route PTO requests to the right manager and update the shared calendar automatically',
+      prefillName: 'PTO Request Approval and Calendar Sync',
+      prefillDesc: 'When an employee submits a PTO request, route it to their manager for approval, notify the team Slack channel when approved, and update the shared calendar'
+    },
+    {
+      title: 'Weekly Pulse Check',
+      desc: 'Send a short weekly survey to the team and aggregate responses into a summary for leadership',
+      prefillName: 'Weekly Team Pulse Survey',
+      prefillDesc: 'Each Friday at 4pm, send a 3-question pulse survey to all team members, collect responses, and email a summary report to leadership by Monday morning'
+    }
+  ],
+  'People Ops': [
+    {
+      title: 'New Hire Onboarding Kickoff',
+      desc: 'Trigger all onboarding tasks and system access when a new hire is confirmed',
+      prefillName: 'New Hire Onboarding Automation',
+      prefillDesc: 'When a new hire is marked active in the HRIS, create their accounts in key tools, assign onboarding tasks, and send welcome email'
+    },
+    {
+      title: 'PTO Request Routing',
+      desc: 'Route PTO requests to the right manager and update the shared calendar automatically',
+      prefillName: 'PTO Request Approval and Calendar Sync',
+      prefillDesc: 'When an employee submits a PTO request, route it to their manager for approval, notify the team Slack channel when approved, and update the shared calendar'
+    },
+    {
+      title: 'Weekly Pulse Check',
+      desc: 'Send a short weekly survey to the team and aggregate responses into a summary for leadership',
+      prefillName: 'Weekly Team Pulse Survey',
+      prefillDesc: 'Each Friday at 4pm, send a 3-question pulse survey to all team members, collect responses, and email a summary report to leadership by Monday morning'
+    }
+  ],
+  'Finance': [
+    {
+      title: 'Expense Report Reconciliation',
+      desc: 'Match submitted expense reports against receipts and flag discrepancies before approval',
+      prefillName: 'Expense Report Reconciliation',
+      prefillDesc: 'When an expense report is submitted, match line items against uploaded receipts, flag missing or mismatched items, and route only clean reports for approval'
+    },
+    {
+      title: 'Monthly Close Checklist',
+      desc: 'Automate the recurring task list and status tracking for the monthly financial close',
+      prefillName: 'Monthly Close Task Tracker',
+      prefillDesc: 'On the last business day of each month, generate the month-end close checklist, assign owners, and send daily status updates to the CFO'
+    },
+    {
+      title: 'Budget vs. Actuals Report',
+      desc: 'Pull budget data and actual spend and generate a variance report automatically',
+      prefillName: 'Budget vs. Actuals Variance Report',
+      prefillDesc: 'On the 5th of each month, pull budget targets and actuals from the accounting system, calculate variances by department, and distribute the report to department heads'
+    }
+  ],
+  'Other': [
+    {
+      title: 'Daily Briefing Digest',
+      desc: 'Aggregate news, notifications, and priority tasks from multiple sources into a single morning summary',
+      prefillName: 'Daily Briefing Digest',
+      prefillDesc: 'Each morning at 7am, pull flagged emails, calendar events, and top news items relevant to my focus areas, and deliver a 5-bullet summary via email or Slack'
+    },
+    {
+      title: 'Document Routing and Filing',
+      desc: 'Automatically route incoming documents to the right folder or person based on content',
+      prefillName: 'Incoming Document Classification and Filing',
+      prefillDesc: 'When a new document arrives, classify it by type and content, route it to the correct folder in Google Drive, and notify the owner'
+    },
+    {
+      title: 'Status Update Generator',
+      desc: 'Turn task manager data into a formatted status update for stakeholders without manual writing',
+      prefillName: 'Weekly Status Update Generator',
+      prefillDesc: 'Each Friday, pull completed and in-progress tasks from the project management tool and generate a formatted status update email ready to send to stakeholders'
+    }
+  ],
+  'General': [
+    {
+      title: 'Daily Briefing Digest',
+      desc: 'Aggregate news, notifications, and priority tasks from multiple sources into a single morning summary',
+      prefillName: 'Daily Briefing Digest',
+      prefillDesc: 'Each morning at 7am, pull flagged emails, calendar events, and top news items relevant to my focus areas, and deliver a 5-bullet summary via email or Slack'
+    },
+    {
+      title: 'Document Routing and Filing',
+      desc: 'Automatically route incoming documents to the right folder or person based on content',
+      prefillName: 'Incoming Document Classification and Filing',
+      prefillDesc: 'When a new document arrives, classify it by type and content, route it to the correct folder in Google Drive, and notify the owner'
+    },
+    {
+      title: 'Status Update Generator',
+      desc: 'Turn task manager data into a formatted status update for stakeholders without manual writing',
+      prefillName: 'Weekly Status Update Generator',
+      prefillDesc: 'Each Friday, pull completed and in-progress tasks from the project management tool and generate a formatted status update email ready to send to stakeholders'
+    }
+  ]
+};
+
+function generateIdeas() {
+  const role = document.getElementById('idea-role').value;
+  if (!role) {
+    document.getElementById('idea-role').style.borderColor = 'rgba(255,179,71,0.5)';
+    return;
+  }
+  document.getElementById('idea-role').style.borderColor = '';
+
+  const ideas = IDEA_DATA[role] || IDEA_DATA['General'];
+  const container = document.getElementById('idea-cards-container');
+  container.innerHTML = '';
+
+  ideas.forEach(idea => {
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+    card.innerHTML = `
+      <h3>${escHtml(idea.title)}</h3>
+      <p>${escHtml(idea.desc)}</p>
+      <button class="btn-use" onclick="useIdea(${JSON.stringify(escHtml(idea.prefillName))}, ${JSON.stringify(escHtml(idea.prefillDesc))}, ${JSON.stringify(escHtml(role))})">Use this idea →</button>
+    `;
+    container.appendChild(card);
+  });
+
+  container.classList.remove('hidden');
+}
+
+function useIdea(prefillName, prefillDesc, role) {
+  // Decode HTML entities for actual values
+  document.getElementById('task-name').value = unescHtml(prefillName);
+  document.getElementById('task-desc').value = unescHtml(prefillDesc);
+  state.ideaCardUsed = true;
+  state.ideaCardRole = role;
+  scrollToWizard();
+  // Flash the fields to show they're pre-filled
+  ['task-name', 'task-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.borderColor = 'var(--teal)';
+    setTimeout(() => { el.style.borderColor = ''; }, 1500);
+  });
+}
+
+function unescHtml(str) {
+  const ta = document.createElement('textarea');
+  ta.innerHTML = str;
+  return ta.value;
+}
+
+// ─── Init ───
+document.addEventListener('DOMContentLoaded', () => {
+  // Step 4 pre-init happens when user enters that step (initStepsIfEmpty called in step 3 next)
+  updateProgress();
+});
+</script>
+
+</body>
+</html>
