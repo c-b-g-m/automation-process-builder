@@ -4,7 +4,19 @@ A free, open-source tool that helps anyone document an automation — even if th
 
 Walk through 8 questions. Get a structured process playbook, tool recommendations per step, and starter AI prompts — all generated client-side, with zero latency.
 
+**[See it live →](https://automate.demandai.studio)**
+
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/c-b-g-m/automation-process-builder)
+
+---
+
+## What you'll need
+
+- **GitHub account** (free) — to fork the repo
+- **Netlify account** (free) — to deploy the site
+- **Supabase account** (free) — to log submissions
+
+That's it. No code editor required.
 
 ---
 
@@ -70,9 +82,9 @@ create policy "anon insert only"
 
 ---
 
-### Step 3 — Add your Supabase credentials to the HTML
+### Step 3 — Add your Supabase credentials
 
-Open `index.html` and find lines near the top of the `<script>` block (search for `REQUIRED`):
+Open `index.html` and search for `REQUIRED`. You'll find two lines near the top of the `<script>` block:
 
 ```js
 // REQUIRED: Replace these with your own Supabase project credentials.
@@ -80,22 +92,29 @@ const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 ```
 
-Replace both placeholder values with the URL and anon key you copied in Step 2. Save the file.
+Replace both placeholder values with the URL and anon key you copied in Step 2.
 
----
-
-### Step 4 — Commit and push
-
-If you cloned the repo manually:
-```bash
-git add index.html
-git commit -m "Add Supabase credentials"
-git push
-```
+**The fastest way (no code editor needed):**
+1. Open your forked repo on GitHub
+2. Click `index.html`
+3. Click the pencil icon (Edit this file)
+4. Use Ctrl+F / Cmd+F to find `REQUIRED`
+5. Replace the two placeholder values
+6. Click **Commit changes**
 
 Netlify will auto-deploy within 30–60 seconds.
 
-If you used the Deploy button, edit `index.html` directly in GitHub (pencil icon) and commit the change — Netlify will redeploy automatically.
+---
+
+### Step 4 — Verify it's working
+
+Once Netlify finishes deploying (check the **Deploys** tab in your dashboard):
+1. Open your site URL
+2. Walk through the wizard once end-to-end
+3. Submit the email gate
+4. Open your Supabase table — you should see a new row in `automation_submissions`
+
+If nothing appears in Supabase, double-check that your URL and anon key were saved correctly. The tool will still work either way — Supabase logging is non-blocking.
 
 ---
 
