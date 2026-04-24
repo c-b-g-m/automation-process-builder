@@ -16,7 +16,7 @@ Walk through 8 questions. Get a structured process playbook, tool recommendation
 
 ## What you'll need
 
-- **GitHub account** (free) — to fork the repo
+- **GitHub account** (free) — the Deploy button forks this repo to your account automatically
 - **Netlify account** (free) — to deploy the site
 - **Supabase account** (free) — to log submissions
 
@@ -28,7 +28,7 @@ That's it. No code editor required.
 
 1. **Idea generator** — Not sure what to automate? Answer 2 questions and get 3 role-based ideas to start from.
 2. **8-step wizard** — Guides you through trigger, inputs, steps, outputs, success criteria, frequency, and failure cost. Flags vague answers inline so nothing slips through.
-3. **Email gate** — Collects name + email before revealing output. Returning users (detected via localStorage) skip the gate.
+3. **Email gate** — Collects name + email before revealing output. Returning users skip the email gate automatically.
 4. **Output section** — Process playbook card, per-step tool recommendations, collapsible starter AI prompts, and a next-steps checklist.
 5. **Supabase logging** — Every submission is stored in your Supabase table for follow-up or analysis.
 
@@ -53,8 +53,8 @@ After deploying, find your forked repo at `github.com/[your-username]/automation
 
 1. Go to [supabase.com](https://supabase.com) and create a free account if you don't have one.
 2. Create a new project.
-3. Open the **SQL Editor** in your project dashboard.
-4. Run the following SQL:
+3. In the left sidebar, click **SQL Editor**.
+4. Paste the SQL below into the editor and click **Run** in the top right:
 
 ```sql
 create table automation_submissions (
@@ -92,17 +92,8 @@ create policy "anon insert only"
 
 ### Step 3 — Add your Supabase credentials
 
-Open `index.html` and search for `REQUIRED`. You'll find two lines near the top of the `<script>` block:
+No code editor needed. Here's the fastest way:
 
-```js
-// REQUIRED: Replace these with your own Supabase project credentials.
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-```
-
-Replace both placeholder values with the URL and anon key you copied in Step 2.
-
-**The fastest way (no code editor needed):**
 1. Go to `github.com/[your-username]/automation-process-builder`
 2. Click `index.html`
 3. Click the pencil icon (Edit this file)
@@ -115,10 +106,10 @@ Replace both placeholder values with the URL and anon key you copied in Step 2.
 ### Step 4 — Verify it's working
 
 Once Netlify finishes deploying (check the **Deploys** tab in your dashboard):
-1. Open your site URL
+1. Open your site URL (shown under **Site overview** in your Netlify dashboard)
 2. Walk through the wizard once end-to-end
 3. Submit the email gate
-4. Open your Supabase table — you should see a new row in `automation_submissions`
+4. In Supabase, click **Table Editor** in the left sidebar → select `automation_submissions` — you should see a new row
 
 If nothing appears in Supabase, double-check that your URL and anon key were saved correctly. The tool will still work either way — Supabase logging is non-blocking.
 
