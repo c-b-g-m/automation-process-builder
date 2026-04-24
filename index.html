@@ -13,7 +13,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Barlow:wght@300;400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,500&family=Barlow:wght@300;400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Shared CSS (provides CSS vars, body, font-family) -->
   <link rel="stylesheet" href="/shared.css" />
@@ -70,28 +70,23 @@
     }
 
     .nav-logo {
-      font-family: 'Barlow', sans-serif;
-      font-weight: 300;
-      font-size: 15px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-variation-settings: 'opsz' 36;
+      font-size: 20px;
+      letter-spacing: 0.01em;
       color: var(--cream);
       text-decoration: none;
-      letter-spacing: 0.01em;
     }
 
     .nav-logo em {
       font-style: italic;
+      font-weight: 500;
+      font-variation-settings: 'opsz' 36;
       background: var(--aurora);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-    }
-
-    .nav-bolt {
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 6px;
-      position: relative;
-      top: -1px;
     }
 
     .nav-back {
@@ -1059,7 +1054,7 @@
 <!-- ── Nav ── -->
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <!-- CUSTOMIZE: Replace with your brand name. The <em> tag applies the aurora gradient style. -->
-  <a href="https://demandai.studio" class="nav-logo"><svg class="nav-bolt" width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="boltGrad" x1="0" y1="0" x2="11" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#A07AFF"/><stop offset="100%" stop-color="#00DCB4"/></linearGradient></defs><path d="M6.5 0L0 8.5h4.5L3 15l8-9.5H6.5V0z" fill="url(#boltGrad)"/></svg>demand <em>AI</em>.studio</a>
+  <a href="https://demandai.studio" class="nav-logo">Demand AI<em>.</em>Studio</a>
   <!-- CUSTOMIZE: Update href to your site, or remove this link entirely -->
   <a href="https://demandai.studio" class="nav-back">← Back to site</a>
 </nav>
