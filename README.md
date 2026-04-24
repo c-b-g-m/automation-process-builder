@@ -134,8 +134,8 @@ In your Netlify site dashboard:
 Search `index.html` for `<!-- CUSTOMIZE:` — every brand-specific element has a comment marking it. There are 4 spots:
 - Page title and meta description (lines 6–8)
 - Nav logo and "Back to site" link (~line 1053)
-- Footer CTA (~line 1382)
-- Page footer copyright (~line 1396)
+- Footer CTA (~line 1484)
+- Page footer copyright (~line 1501)
 
 ### Colors and fonts
 All CSS variables are defined at the top of the `<style>` block:
