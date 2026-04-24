@@ -1051,9 +1051,9 @@
 <!-- ── Nav ── -->
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <!-- CUSTOMIZE: Replace with your brand name. The <em> tag applies the aurora gradient style. -->
-  <a href="/" class="nav-logo"><em>Automation</em> Process Builder</a>
+  <a href="https://demandai.studio" class="nav-logo">demand <em>AI</em> studio</a>
   <!-- CUSTOMIZE: Update href to your site, or remove this link entirely -->
-  <a href="https://github.com/c-b-g-m/automation-process-builder" class="nav-back">← View source</a>
+  <a href="https://demandai.studio" class="nav-back">← Back to site</a>
 </nav>
 
 <!-- ── Main ── -->
@@ -1413,12 +1413,12 @@
       <div id="output-content" class="output-blurred">
         <div class="output-inner">
           <div class="output-header">
-            <div>
+            <div style="flex:1;min-width:0;">
               <h2>Your Automation Manual<span class="output-header__task-name" id="out-task-name"></span></h2>
             </div>
             <div class="output-actions">
               <button class="btn-outline" onclick="copyManual()">Copy manual</button>
-              <button class="btn-outline" onclick="downloadManual()">Download .md</button>
+              <button class="btn-outline" onclick="downloadManual()" title="A Markdown file — opens in Obsidian, Notion, or any text editor">Download playbook (.md)</button>
               <button class="btn-outline" onclick="window.print()">Print</button>
             </div>
           </div>
@@ -1472,9 +1472,7 @@
           <!-- Next steps checklist -->
           <div class="next-steps">
             <h3>Next Steps</h3>
-            <ul class="checklist">
-              <li><span class="checklist__box"></span><span>Map each "fully routine" step to an automation platform</span></li>
-              <li><span class="checklist__box"></span><span>For each "fully judgment" step, decide: keep human in the loop, or use AI with review</span></li>
+            <ul class="checklist" id="next-steps-list">
               <li><span class="checklist__box"></span><span>Identify the first step to automate — build it this week</span></li>
               <li><span class="checklist__box"></span><span>Set up error alerting so failures don't go unnoticed</span></li>
               <li><span class="checklist__box"></span><span>Do one test run manually before going live</span></li>
@@ -2331,6 +2329,17 @@ function recommendTools(step) {
 // ─── Starter prompt generation ───
 function generateStarterPrompt(step) {
   const j = step.judgment;
+  const inputDesc = (step.fromTool && step.fromData)
+    ? `From ${step.fromTool}: ${step.fromData}`
+    : step.fromTool
+      ? `Data from ${step.fromTool}`
+      : state.inputs;
+  const outputDesc = (step.toTool && step.toData)
+    ? `To ${step.toTool}: ${step.toData}`
+    : step.toTool
+      ? `Pass result to ${step.toTool}`
+      : state.output;
+
   if (j === 'fully_routine' || j === 'mostly_routine') {
     return `You are processing a step in an automated workflow.
 
@@ -2338,34 +2347,38 @@ Task context: ${state.taskName} — ${state.taskDescription}
 
 Your job in this step: ${step.name}
 
-Input you will receive:
-[PASTE INPUT DATA HERE]
+Input:
+${inputDesc}
 
-Output required:
-${state.output}
+Expected output:
+${outputDesc}
+
+Success criteria for this step: ${state.successCriteria}
 
 Rules:
-- Do not add information that wasn't provided
-- Follow the exact output format specified above
-- If input is missing required fields, return: "ERROR: missing [field name]"`;
+- Produce only what is specified in "Expected output" — do not add interpretation or commentary
+- Follow the exact format required
+- If a required input field is missing, return: "ERROR: missing [field name]" — do not guess`;
   } else {
     return `You are assisting with a step that requires judgment.
 
 Task context: ${state.taskName} — ${state.taskDescription}
 
 This step: ${step.name}
+${step.judgmentExplain ? `Why judgment is needed: ${step.judgmentExplain}` : ''}
+
+Input:
+${inputDesc}
+
+What this step should produce:
+${outputDesc}
+
 Success looks like: ${state.successCriteria}
 
-Background and constraints:
-[ADD RELEVANT CONTEXT — who the audience is, what matters, what to avoid]
-
-Input you will receive:
-[PASTE INPUT DATA HERE]
-
-What I need from you:
-[Describe the decision or output needed]
-
-Before responding, flag if anything in the input is ambiguous or missing information needed to complete this step accurately.`;
+Before responding:
+1. Flag any ambiguous or missing input that would prevent you from completing this step accurately
+2. State your reasoning before giving the final output
+3. If you are uncertain about any decision, present 2 options with a recommendation rather than choosing silently`;
   }
 }
 
@@ -2494,6 +2507,8 @@ function buildOutput() {
 
   // Evals
   buildEvalsContent();
+  // Next steps
+  buildNextSteps();
 }
 
 function togglePrompt(id, btn) {
@@ -2632,19 +2647,104 @@ ${state.successCriteria}
 }
 
 // ─── Evals content ───
+function buildNextSteps() {
+  const listEl = document.getElementById('next-steps-list');
+  if (!listEl) return;
+
+  const routineSteps = state.processSteps.filter(s => isRoutine(s.judgment));
+  const judgmentSteps = state.processSteps.filter(s => !isRoutine(s.judgment));
+  const firstRoutine = routineSteps[0];
+  const firstRoutineIdx = firstRoutine ? state.processSteps.indexOf(firstRoutine) + 1 : null;
+  const firstTools = firstRoutine ? recommendTools(firstRoutine) : [];
+  const firstTool = firstTools[0] || null;
+
+  const items = [];
+
+  if (firstRoutine) {
+    items.push(`Start with Step ${firstRoutineIdx} — "${escHtml(firstRoutine.name)}" — it's fully routine${firstTool ? ` and a strong fit for ${escHtml(firstTool)}` : '. Pick one tool from the recommendations above and build that step first.'}`);
+  } else {
+    items.push('Start by documenting your first step fully before building — every step needs a defined input, action, and output before it can be automated.');
+  }
+
+  if (judgmentSteps.length > 0) {
+    const names = judgmentSteps.map((s, _) => `Step ${state.processSteps.indexOf(s) + 1} (${escHtml(s.name)})`).join(', ');
+    items.push(`${names} ${judgmentSteps.length === 1 ? 'involves' : 'involve'} judgment — decide now: keep human in the loop, or use AI with a review gate before the output is used`);
+  }
+
+  items.push('Add an error alert to your automation before going live — without one, failures are invisible');
+  items.push('Run one full manual test and compare the output to your success criteria before switching off the manual process');
+
+  if (state.frequency) {
+    const f = state.frequency.toLowerCase();
+    if (f.includes('multiple') || f.includes('daily')) {
+      items.push('Monitor outputs daily for the first week — high-frequency automations surface edge cases fast');
+    } else {
+      items.push('Review the first 4 runs manually — edge cases surface slowly, especially at weekly or monthly cadences');
+    }
+  }
+
+  listEl.innerHTML = items.map(text =>
+    `<li><span class="checklist__box"></span><span>${text}</span></li>`
+  ).join('');
+}
+
 function buildEvalsContent() {
   const evalsEl = document.getElementById('evals-content');
   if (!evalsEl) return;
+
+  const li = (text, color) => `<li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;margin-bottom:6px;"><span style="color:${color || 'var(--teal)'};flex-shrink:0;margin-top:1px;">→</span><span>${text}</span></li>`;
+
+  // Per-step eval checks based on judgment level
+  const stepChecks = state.processSteps.map((s, i) => {
+    if (s.judgment === 'fully_routine') {
+      return li(`<strong>Step ${i+1} — ${escHtml(s.name)}:</strong> Verify the output is identical to what you'd produce manually. Fully routine steps should have zero variance — flag any deviation immediately.`);
+    } else if (s.judgment === 'mostly_routine') {
+      return li(`<strong>Step ${i+1} — ${escHtml(s.name)}:</strong> Spot-check every 3rd or 4th run. Mostly routine steps can drift when input patterns change — watch for outputs that are technically correct but feel off.`);
+    } else if (s.judgment === 'mostly_judgment') {
+      return li(`<strong>Step ${i+1} — ${escHtml(s.name)}:</strong> Review every output for the first month. Once you trust the pattern, move to sampling 1 in 5. Keep a log of corrections — they reveal prompt gaps.`, 'var(--violet)');
+    } else {
+      return li(`<strong>Step ${i+1} — ${escHtml(s.name)}:</strong> Do not let this step run unsupervised yet. Review 100% of outputs and build a correction log. Only reduce review frequency once you have 20+ examples that match your standard.`, 'var(--violet)');
+    }
+  }).join('');
+
+  // Failure cost urgency flag
+  const highStakes = state.failureCost && (
+    state.failureCost.toLowerCase().includes('client') ||
+    state.failureCost.toLowerCase().includes('compliance') ||
+    state.failureCost.toLowerCase().includes('legal') ||
+    state.failureCost.toLowerCase().includes('reputation')
+  );
+  const stakesBanner = highStakes
+    ? `<p style="font-size:13px;color:var(--cream-dim);line-height:1.6;margin-bottom:16px;padding:12px 14px;background:rgba(160,122,255,0.08);border:1px solid rgba(160,122,255,0.2);border-radius:6px;"><strong style="color:var(--violet);">High-stakes flag:</strong> You noted that a failure here has ${escHtml(state.failureCost.toLowerCase())} consequences. Run this automation in parallel with your existing manual process for at least 2 weeks before fully handing it off.</p>`
+    : '';
+
+  // Monitoring cadence based on frequency
+  let monitorNote = 'Review the first 4 runs manually before stepping back.';
+  if (state.frequency) {
+    const f = state.frequency.toLowerCase();
+    if (f.includes('multiple') || f.includes('daily')) {
+      monitorNote = 'High-frequency automation: monitor daily for the first week, then weekly once output is stable.';
+    } else if (f.includes('weekly')) {
+      monitorNote = 'Review the first 4 weekly runs manually — edge cases surface slowly at this cadence.';
+    } else if (f.includes('monthly')) {
+      monitorNote = 'Review the first 3 monthly runs manually before fully stepping back.';
+    }
+  }
+
   evalsEl.innerHTML = `
-    <p style="font-size:14px;color:var(--cream-dim);margin-top:6px;margin-bottom:16px;line-height:1.6;">An automation that runs without you still needs to be checked. Evaluations are how you know it's working — and how you catch it when something breaks.</p>
+    <p style="font-size:14px;color:var(--cream-dim);margin-top:6px;margin-bottom:16px;line-height:1.6;">An automation that runs without you still needs to be checked. These checks are based on the judgment levels you assigned to each step.</p>
     <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Your success criteria</p>
     <p style="font-size:13px;color:var(--cream-dim);margin-bottom:18px;font-style:italic;line-height:1.6;padding:12px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:6px;">${escHtml(state.successCriteria)}</p>
+    ${stakesBanner}
+    <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Per-step eval standard</p>
+    <ul style="list-style:none;display:flex;flex-direction:column;margin-bottom:20px;">${stepChecks}</ul>
+    <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Monitoring cadence</p>
+    <p style="font-size:13px;color:var(--cream-dim);margin-bottom:18px;line-height:1.6;">${escHtml(monitorNote)}</p>
     <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Before going live</p>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Run it manually once and verify the output matches your criteria exactly</span></li>
-      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Add an error notification step — automations fail silently if you don't build one in</span></li>
-      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Spot-check outputs weekly for the first month — edge cases surface slowly</span></li>
-      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Document what "off" looks like, not just what "right" looks like</span></li>
+      ${li('Run it manually once end-to-end and verify every output matches your success criteria')}
+      ${li('Add an error notification step — automations fail silently if you don't build one in')}
+      ${li('Document what "off" looks like, not just what "right" looks like — write it down now while it's fresh')}
     </ul>
     <!-- CUSTOMIZE: Replace or remove this closing line -->
     <p style="font-size:13px;color:var(--cream-dim);line-height:1.6;">Find this tool useful? <a href="https://github.com/c-b-g-m/automation-process-builder" class="aurora-link" style="font-size:13px;">Star it on GitHub →</a></p>
