@@ -4,7 +4,9 @@ A free, open-source tool that helps anyone document an automation — even if th
 
 Walk through 8 questions. Get a structured process playbook, tool recommendations per step, and starter AI prompts — all generated client-side, with zero latency.
 
-**[See it live →](https://automate.demandai.studio)**
+**Want to try it first? [See it live →](https://automate.demandai.studio)**
+
+**This repo is for deploying your own branded version** — for your team, your clients, or your audience. Follow the 5-step guide below to have your own copy running in minutes.
 
 ![Preview of the Automation Process Builder tool](assets/preview.png)
 
@@ -42,6 +44,8 @@ Click the **Deploy to Netlify** button above. It will:
 - Deploy it immediately
 
 No configuration needed to get the site running. You can customize afterward.
+
+After deploying, find your forked repo at `github.com/[your-username]/automation-process-builder` — you'll need it in Step 3.
 
 ---
 
@@ -82,6 +86,8 @@ create policy "anon insert only"
 5. In your Supabase project, go to **Project Settings → API**.
 6. Copy your **Project URL** and **anon public key**.
 
+> The anon key is designed to be public — Supabase's row-level security policy (which you set up above) controls what anyone can do with it. It is safe to include in your code.
+
 ---
 
 ### Step 3 — Add your Supabase credentials
@@ -97,14 +103,12 @@ const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 Replace both placeholder values with the URL and anon key you copied in Step 2.
 
 **The fastest way (no code editor needed):**
-1. Open your forked repo on GitHub
+1. Go to `github.com/[your-username]/automation-process-builder`
 2. Click `index.html`
 3. Click the pencil icon (Edit this file)
 4. Use Ctrl+F / Cmd+F to find `REQUIRED`
 5. Replace the two placeholder values
-6. Click **Commit changes**
-
-Netlify will auto-deploy within 30–60 seconds.
+6. Click **Commit changes** — this saves the file to your repo and automatically triggers a Netlify redeploy. Wait 30–60 seconds, then check the **Deploys** tab in your Netlify dashboard to confirm it went live.
 
 ---
 
@@ -122,11 +126,32 @@ If nothing appears in Supabase, double-check that your URL and anon key were sav
 
 ### Step 5 — (Optional) Add a custom domain
 
+> Skip this step if you're fine using the Netlify URL (e.g., `quirky-fox-123.netlify.app`). You can always add a custom domain later.
+
 In your Netlify site dashboard:
 1. Go to **Domain management → Add custom domain**
 2. Enter your subdomain (e.g., `automate.yourdomain.com`)
 3. Add a CNAME record at your DNS provider pointing to your Netlify site URL
 4. Netlify will provision an SSL certificate automatically
+
+---
+
+## Troubleshooting
+
+**Submissions aren't appearing in Supabase**
+Double-check that you copied the full Project URL (starts with `https://`) and the full anon key — even one missing character will silently fail. The tool will continue to work either way; submissions just won't be logged.
+
+**Netlify deploy is stuck or showing an error**
+Go to your Netlify site dashboard → **Deploys** tab and click the failed deploy to see the error log. The most common cause is an incomplete GitHub connection during setup. Try the Deploy to Netlify button again.
+
+**I can't find my forked repo on GitHub**
+Go to `github.com/[your-username]` and look under **Repositories**. It will be named `automation-process-builder`.
+
+**My site URL looks random (e.g., `quirky-fox-123.netlify.app`)**
+That's normal — Netlify assigns a random name by default. You can rename it under **Site configuration → Site name**, or connect a custom domain in Step 5.
+
+**Still stuck?**
+Open a [GitHub Issue](https://github.com/c-b-g-m/automation-process-builder/issues) and describe what happened. I check regularly.
 
 ---
 
