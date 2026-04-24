@@ -13,7 +13,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,500&family=Barlow:wght@300;400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Barlow:wght@300;400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Shared CSS (provides CSS vars, body, font-family) -->
   <link rel="stylesheet" href="/shared.css" />
@@ -70,19 +70,16 @@
     }
 
     .nav-logo {
-      font-family: 'Fraunces', serif;
-      font-weight: 600;
-      font-variation-settings: 'opsz' 36;
-      font-size: 20px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      font-size: 15px;
       letter-spacing: 0.01em;
       color: var(--cream);
       text-decoration: none;
     }
 
     .nav-logo em {
-      font-style: italic;
-      font-weight: 500;
-      font-variation-settings: 'opsz' 36;
+      font-style: normal;
       background: var(--aurora);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -1054,9 +1051,11 @@
 <!-- ── Nav ── -->
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <!-- CUSTOMIZE: Replace with your brand name. The <em> tag applies the aurora gradient style. -->
-  <a href="https://demandai.studio" class="nav-logo">Demand AI<em>.</em>Studio</a>
+  <!-- CUSTOMIZE: Replace with your brand name -->
+  <a href="/" class="nav-logo"><em>Your Brand</em></a>
   <!-- CUSTOMIZE: Update href to your site, or remove this link entirely -->
-  <a href="https://demandai.studio" class="nav-back">← Back to site</a>
+  <!-- CUSTOMIZE: Update href to your site -->
+  <a href="/" class="nav-back">← Back to site</a>
 </nav>
 
 <!-- ── Main ── -->
