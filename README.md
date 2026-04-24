@@ -6,6 +6,8 @@ Walk through 8 questions. Get a structured process playbook, tool recommendation
 
 **[See it live →](https://automate.demandai.studio)**
 
+![Preview of the Automation Process Builder tool](assets/preview.png)
+
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/c-b-g-m/automation-process-builder)
 
 ---
