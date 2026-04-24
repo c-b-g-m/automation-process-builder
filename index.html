@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- CUSTOMIZE: Update title and description with your brand -->
   <title>Automation Process Builder</title>
-  <meta name="description" content="Document your automation in 8 questions and get a structured playbook, tool recommendations, and starter AI prompts." />
-  <meta name="robots" content="index, follow" />
+  <meta name="description" content="Document your automation in 8 questions and get a structured automation manual, tool recommendations, and starter AI prompts." />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23A07AFF'/%3E%3Cstop offset='100%25' stop-color='%2300DCB4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='18,2 8,18 15,18 14,30 24,14 17,14' fill='url(%23g)'/%3E%3C/svg%3E" />
@@ -16,7 +15,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Barlow:wght@300;400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- All styles are self-contained below — no external CSS needed -->
+  <!-- Shared CSS (provides CSS vars, body, font-family) -->
+  <link rel="stylesheet" href="/shared.css" />
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1051,9 +1051,9 @@
 <!-- ── Nav ── -->
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <!-- CUSTOMIZE: Replace with your brand name. The <em> tag applies the aurora gradient style. -->
-  <a href="/" class="nav-logo">Automation <em>Process</em> Builder</a>
+  <a href="/" class="nav-logo"><em>Automation</em> Process Builder</a>
   <!-- CUSTOMIZE: Update href to your site, or remove this link entirely -->
-  <a href="/" class="nav-back">← Back to site</a>
+  <a href="https://github.com/c-b-g-m/automation-process-builder" class="nav-back">← View source</a>
 </nav>
 
 <!-- ── Main ── -->
@@ -1062,7 +1062,7 @@
   <!-- ── Hero ── -->
   <section class="hero">
     <p class="overline">Automation Process Builder</p>
-    <h1>Document your automation. Get a playbook.</h1>
+    <h1>Document your automation. Get an automation manual.</h1>
     <p class="hero-sub">Walk through 8 questions. We'll map the steps, recommend the tools, and write your starter prompts.</p>
     <div class="hero-actions">
       <a href="#wizard" class="btn-aurora" onclick="scrollToWizard(event)">Start building →</a>
@@ -1150,7 +1150,7 @@
 
         <div class="field-group" id="fg-trigger-type">
           <label for="trigger-type">How does this task get started?</label>
-          <select id="trigger-type" onchange="updateTriggerPlaceholder()">
+          <select id="trigger-type" onchange="updateTriggerFields()">
             <option value="">Select trigger type…</option>
             <option value="time-based">Time-based (runs on a schedule)</option>
             <option value="event-based">Event-based (something happens that kicks it off)</option>
@@ -1159,10 +1159,79 @@
           <p class="field-error" id="err-trigger-type">Select how this task gets started.</p>
         </div>
 
-        <div class="field-group" id="fg-trigger-desc">
-          <label for="trigger-desc">Describe the trigger specifically</label>
-          <input type="text" id="trigger-desc" placeholder='e.g., "Every Monday at 8am" or "On the 1st of each month"' />
-          <p class="field-error" id="err-trigger-desc">Be specific about the trigger. What exact event, time, or condition starts this?</p>
+        <!-- Time-based fields -->
+        <div id="trigger-fields-time" class="hidden">
+          <div class="process-step-block__fields">
+            <div class="field-group" id="fg-trigger-schedule">
+              <label for="trigger-schedule">Schedule</label>
+              <select id="trigger-schedule">
+                <option value="">Select schedule…</option>
+                <option value="Every Monday">Every Monday</option>
+                <option value="Every Tuesday">Every Tuesday</option>
+                <option value="Every Wednesday">Every Wednesday</option>
+                <option value="Every Thursday">Every Thursday</option>
+                <option value="Every Friday">Every Friday</option>
+                <option value="Every weekday (Mon–Fri)">Every weekday (Mon–Fri)</option>
+                <option value="Every day">Every day</option>
+                <option value="1st of each month">1st of each month</option>
+                <option value="15th of each month">15th of each month</option>
+                <option value="Last day of each month">Last day of each month</option>
+                <option value="Every quarter">Every quarter</option>
+              </select>
+              <p class="field-error" id="err-trigger-schedule">Select the schedule.</p>
+            </div>
+            <div class="field-group" id="fg-trigger-time">
+              <label for="trigger-time">At what time?</label>
+              <select id="trigger-time">
+                <option value="">Select time…</option>
+                <option value="6:00am">6:00am</option>
+                <option value="7:00am">7:00am</option>
+                <option value="8:00am">8:00am</option>
+                <option value="9:00am">9:00am</option>
+                <option value="10:00am">10:00am</option>
+                <option value="11:00am">11:00am</option>
+                <option value="12:00pm (noon)">12:00pm (noon)</option>
+                <option value="1:00pm">1:00pm</option>
+                <option value="2:00pm">2:00pm</option>
+                <option value="3:00pm">3:00pm</option>
+                <option value="4:00pm">4:00pm</option>
+                <option value="5:00pm">5:00pm</option>
+                <option value="End of business day">End of business day</option>
+                <option value="Time doesn't matter">Time doesn't matter</option>
+              </select>
+              <p class="field-error" id="err-trigger-time">Select a time.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event-based fields -->
+        <div id="trigger-fields-event" class="hidden">
+          <div class="process-step-block__fields">
+            <div class="field-group" id="fg-trigger-event-tool">
+              <label>Which system fires the trigger?</label>
+              <div class="tool-select-wrapper">
+                <select id="trigger-event-tool" onchange="handleToolSelectChange(this)">
+                  <option value="">Select system…</option>
+                </select>
+                <input type="text" class="tool-other-input" placeholder="Type tool name…" style="display:none;margin-top:8px;" />
+              </div>
+              <p class="field-error" id="err-trigger-event-tool">Select the system that fires this event.</p>
+            </div>
+            <div class="field-group" id="fg-trigger-event-desc">
+              <label for="trigger-event-desc">What event triggers it?</label>
+              <input type="text" id="trigger-event-desc" placeholder='e.g., "New form submission" or "Deal moves to Closed Won"' />
+              <p class="field-error" id="err-trigger-event-desc">Describe the specific event.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manually-triggered fields -->
+        <div id="trigger-fields-manual" class="hidden">
+          <div class="field-group" id="fg-trigger-manual-desc">
+            <label for="trigger-manual-desc">What prompts you to run it?</label>
+            <input type="text" id="trigger-manual-desc" placeholder='e.g., "Before each client meeting" or "When I decide to send the weekly update"' />
+            <p class="field-error" id="err-trigger-manual-desc">Describe what prompts you to run this.</p>
+          </div>
         </div>
 
         <div class="wizard-nav">
@@ -1174,13 +1243,11 @@
       <!-- Step 3 -->
       <div class="wizard-step" id="step-3">
         <h2>What does it need to start?</h2>
-        <p class="wizard-step__desc">List the inputs, data sources, and tools this task requires.</p>
+        <p class="wizard-step__desc">List every system this automation reads data from once it's triggered. These are data sources, not additional triggers — the trigger is one thing.</p>
 
-        <div class="field-group" id="fg-inputs">
-          <label for="task-inputs">What information or data does this task need to run? Include where it comes from.</label>
-          <textarea id="task-inputs" rows="5" placeholder='e.g., "Deal data from HubSpot (filtered by close date this week), the rep name from the Deals record, and the Google Sheet where summaries are logged"'></textarea>
-          <p class="field-error" id="err-inputs">What tools or files does this start from? Name them specifically — Google Sheets, HubSpot, a CSV file, a Slack message, etc.</p>
-        </div>
+        <div id="input-sources-list" style="display:flex;flex-direction:column;gap:16px;margin-bottom:16px;"></div>
+        <button class="btn-add-step" onclick="addInputSource()">+ Add another source</button>
+        <p class="field-error" id="err-inputs" style="margin-top:12px;">Add at least one data source and select its tool.</p>
 
         <div class="wizard-nav">
           <button class="btn-back" onclick="prevStep(3)">← Back</button>
@@ -1190,14 +1257,16 @@
 
       <!-- Step 4 -->
       <div class="wizard-step" id="step-4">
-        <h2>Walk through the steps</h2>
-        <p class="wizard-step__desc">Break this task into individual steps. Add them one at a time. Be specific — each step should be one action.</p>
+        <h2>What are the steps?</h2>
+        <p class="wizard-step__desc">Add each step between the trigger and the final output. One action per step — be specific.</p>
 
         <div class="process-steps-list" id="process-steps-list"></div>
 
         <button class="btn-add-step" onclick="addProcessStep()">+ Add a step</button>
 
         <p class="field-error" id="err-steps" style="margin-top: 12px;">Add at least 2 steps. Most tasks have 3–6 discrete steps — what comes before and after?</p>
+
+        <p style="font-size:13px;color:var(--muted);margin-top:20px;line-height:1.6;">When you've added all the steps, click Next → to describe the final output.</p>
 
         <div class="wizard-nav">
           <button class="btn-back" onclick="prevStep(4)">← Back</button>
@@ -1208,12 +1277,37 @@
       <!-- Step 5 -->
       <div class="wizard-step" id="step-5">
         <h2>What does it produce?</h2>
-        <p class="wizard-step__desc">Describe the output — its format and where it ends up.</p>
+        <p class="wizard-step__desc">Specify the output format, where it lands, and who receives it.</p>
 
-        <div class="field-group" id="fg-output">
-          <label for="task-output">What does this task produce when it's done? Describe the output, its format, and where it goes.</label>
-          <textarea id="task-output" rows="5" placeholder='e.g., "A formatted email with a table of this week&apos;s closed deals, sent to my manager via Gmail. Also a new row added to the Weekly Summaries tab in Google Sheets."'></textarea>
-          <p class="field-error" id="err-output">Name the output format (email, Slack message, Google Doc, spreadsheet row, PDF) and where it goes.</p>
+        <div class="process-step-block__fields" style="margin-bottom:16px;">
+          <div class="field-group" id="fg-output-format">
+            <label for="output-format">Output format</label>
+            <select id="output-format">
+              <option value="">Select format…</option>
+              <option value="Email">Email</option>
+              <option value="Slack message">Slack message</option>
+              <option value="Google Sheet row">Google Sheet row</option>
+              <option value="Google Doc">Google Doc</option>
+              <option value="Notion page or database row">Notion page or database row</option>
+              <option value="Airtable record">Airtable record</option>
+              <option value="HubSpot record update">HubSpot record update</option>
+              <option value="Salesforce record update">Salesforce record update</option>
+              <option value="PDF">PDF</option>
+              <option value="CSV file">CSV file</option>
+              <option value="Webhook / API call">Webhook / API call</option>
+              <option value="Other">Other</option>
+            </select>
+            <p class="field-error" id="err-output-format">Select the output format.</p>
+          </div>
+          <div class="field-group" id="fg-output-dest">
+            <label for="output-dest">Where does it go?</label>
+            <input type="text" id="output-dest" placeholder='e.g., "Weekly Summaries tab in Google Sheets" or "My manager&apos;s Gmail inbox"' />
+            <p class="field-error" id="err-output-dest">Describe where the output lands — be specific.</p>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="output-recipient">Who receives or acts on it? <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+          <input type="text" id="output-recipient" placeholder='e.g., "Marketing team" or "Assigned sales rep"' />
         </div>
 
         <div class="wizard-nav">
@@ -1284,7 +1378,7 @@
 
         <div class="wizard-nav">
           <button class="btn-back" onclick="prevStep(8)">← Back</button>
-          <button class="btn-aurora" onclick="nextStep(8)">See my playbook →</button>
+          <button class="btn-aurora" onclick="nextStep(8)">See my automation manual →</button>
         </div>
       </div>
 
@@ -1297,7 +1391,7 @@
       <!-- Email gate overlay -->
       <div id="email-gate-overlay" class="email-gate-overlay">
         <div class="email-gate-card">
-          <h2>Your playbook is ready.</h2>
+          <h2>Your automation manual is ready.</h2>
           <p>Enter your name and email to reveal it.</p>
           <div class="email-gate-fields">
             <div class="field-group" id="fg-gate-name">
@@ -1311,7 +1405,7 @@
               <p class="field-error" id="err-gate-email">Please enter a valid email address.</p>
             </div>
           </div>
-          <button class="btn-aurora" style="width:100%;" onclick="submitGate()">Show my playbook →</button>
+          <button class="btn-aurora" style="width:100%;" onclick="submitGate()">Show my automation manual →</button>
         </div>
       </div>
 
@@ -1320,10 +1414,11 @@
         <div class="output-inner">
           <div class="output-header">
             <div>
-              <h2>Your Automation Playbook<span class="output-header__task-name" id="out-task-name"></span></h2>
+              <h2>Your Automation Manual<span class="output-header__task-name" id="out-task-name"></span></h2>
             </div>
             <div class="output-actions">
-              <button class="btn-outline" onclick="copyPlaybook()">Copy playbook</button>
+              <button class="btn-outline" onclick="copyManual()">Copy manual</button>
+              <button class="btn-outline" onclick="downloadManual()">Download .md</button>
               <button class="btn-outline" onclick="window.print()">Print</button>
             </div>
           </div>
@@ -1366,6 +1461,14 @@
             <div id="step-cards-container"></div>
           </div>
 
+          <!-- Evaluations -->
+          <div class="process-doc" style="margin-bottom:28px;">
+            <div class="doc-section" style="padding-top:0;border-bottom:none;padding-bottom:0;">
+              <p class="doc-label">Evaluations</p>
+              <div id="evals-content"></div>
+            </div>
+          </div>
+
           <!-- Next steps checklist -->
           <div class="next-steps">
             <h3>Next Steps</h3>
@@ -1380,7 +1483,7 @@
 
           <!-- CUSTOMIZE: Update or remove this footer CTA -->
           <div class="footer-cta">
-            <p>Keep building? Share this tool with your team.</p>
+            <p>Find this useful? Star it on GitHub.</p>
             <a href="https://github.com/c-b-g-m/automation-process-builder" class="aurora-link">Get the source code →</a>
           </div>
         </div>
@@ -1396,13 +1499,14 @@
 <!-- Page footer -->
 <footer class="page-footer">
   <!-- CUSTOMIZE: Update with your name/brand and year -->
-  <p>© 2026 Your Name or Brand</p>
+  <p>© 2026 <a href="https://github.com/c-b-g-m/automation-process-builder">Automation Process Builder</a></p>
 </footer>
 
 <script>
 // ─── Supabase config — replace with your project values ───
-// REQUIRED: Replace these with your own Supabase project credentials.
-// See README.md → Step 2 for instructions on creating the Supabase table.
+// ─── CUSTOMIZE: Replace with your Supabase project values ───────────────────
+// Create a free project at supabase.com, then find these under Settings > API.
+// Leave as-is to run without Supabase — submissions simply won't be saved.
 const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
@@ -1422,9 +1526,13 @@ const state = {
   taskDescription: '',
   triggerType: '',
   triggerDescription: '',
-  inputs: '',
-  processSteps: [],   // [{name, who, judgment}]
-  output: '',
+  inputSources: [],   // [{tool, data}]
+  inputs: '',         // serialized string from inputSources
+  processSteps: [],   // [{name, who, judgment, fromTool, fromData, toTool, toData}]
+  output: '',         // serialized string from output fields
+  outputFormat: '',
+  outputDest: '',
+  outputRecipient: '',
   successCriteria: '',
   frequency: '',
   failureCost: '',
@@ -1433,6 +1541,33 @@ const state = {
   userName: '',
   userEmail: ''
 };
+
+// ─── Tool select options ───
+function toolOptions() {
+  return `
+    <option value="">Select tool…</option>
+    <option value="Google Sheets">Google Sheets</option>
+    <option value="Google Docs">Google Docs</option>
+    <option value="Gmail">Gmail</option>
+    <option value="Google Drive">Google Drive</option>
+    <option value="HubSpot">HubSpot</option>
+    <option value="Salesforce">Salesforce</option>
+    <option value="Slack">Slack</option>
+    <option value="Airtable">Airtable</option>
+    <option value="Notion">Notion</option>
+    <option value="Typeform / Form">Typeform / Form</option>
+    <option value="Stripe">Stripe</option>
+    <option value="QuickBooks">QuickBooks</option>
+    <option value="Project tool (Asana / Monday / etc.)">Project tool (Asana / Monday / etc.)</option>
+    <option value="Jira / GitHub">Jira / GitHub</option>
+    <option value="Make / Zapier / n8n">Make / Zapier / n8n</option>
+    <option value="AI / LLM (any provider)">AI / LLM (any provider)</option>
+    <option value="CSV / Excel file">CSV / Excel file</option>
+    <option value="Webhook / API">Webhook / API</option>
+    <option value="Email (other)">Email (other)</option>
+    <option value="Other">Other</option>
+  `;
+}
 
 // ─── URL / UTM utils ───
 function getUTM(param) {
@@ -1525,33 +1660,55 @@ function nextStep(n) {
 
   else if (n === 2) {
     const type = document.getElementById('trigger-type').value;
-    const desc = document.getElementById('trigger-desc').value.trim();
     if (!type) {
       showError('fg-trigger-type', 'err-trigger-type'); valid = false;
     } else { clearError('fg-trigger-type', 'err-trigger-type'); }
 
-    if (desc.length < 10) {
-      document.getElementById('err-trigger-desc').textContent = 'Be specific about the trigger. What exact event, time, or condition starts this?';
-      showError('fg-trigger-desc', 'err-trigger-desc'); valid = false;
-    } else if (type === 'event-based' && !containsToolName(desc)) {
-      document.getElementById('err-trigger-desc').textContent = 'Which tool or system fires this event? For example: HubSpot, Google Sheets, Typeform, Slack.';
-      showError('fg-trigger-desc', 'err-trigger-desc'); valid = false;
-    } else { clearError('fg-trigger-desc', 'err-trigger-desc'); }
+    let triggerDesc = '';
+
+    if (type === 'time-based') {
+      const schedule = document.getElementById('trigger-schedule').value;
+      const time = document.getElementById('trigger-time').value;
+      if (!schedule) { showError('fg-trigger-schedule', 'err-trigger-schedule'); valid = false; }
+      else { clearError('fg-trigger-schedule', 'err-trigger-schedule'); }
+      if (!time) { showError('fg-trigger-time', 'err-trigger-time'); valid = false; }
+      else { clearError('fg-trigger-time', 'err-trigger-time'); }
+      if (schedule && time) triggerDesc = `${schedule} at ${time}`;
+    } else if (type === 'event-based') {
+      const evtToolEl = document.getElementById('trigger-event-tool');
+      const evtTool = getToolSelectValue(evtToolEl);
+      const evtDesc = document.getElementById('trigger-event-desc').value.trim();
+      if (!evtTool) { showError('fg-trigger-event-tool', 'err-trigger-event-tool'); valid = false; }
+      else { clearError('fg-trigger-event-tool', 'err-trigger-event-tool'); }
+      if (!evtDesc) { showError('fg-trigger-event-desc', 'err-trigger-event-desc'); valid = false; }
+      else { clearError('fg-trigger-event-desc', 'err-trigger-event-desc'); }
+      if (evtTool && evtDesc) triggerDesc = `${evtTool}: ${evtDesc}`;
+    } else if (type === 'manually-triggered') {
+      const manualDesc = document.getElementById('trigger-manual-desc').value.trim();
+      if (!manualDesc) { showError('fg-trigger-manual-desc', 'err-trigger-manual-desc'); valid = false; }
+      else { clearError('fg-trigger-manual-desc', 'err-trigger-manual-desc'); }
+      if (manualDesc) triggerDesc = manualDesc;
+    }
 
     if (valid) {
       state.triggerType = type;
-      state.triggerDescription = desc;
+      state.triggerDescription = triggerDesc;
+      initSourcesIfEmpty();
       showStep(3);
     }
   }
 
   else if (n === 3) {
-    const inputs = document.getElementById('task-inputs').value.trim();
-    if (inputs.length < 30) {
-      showError('fg-inputs', 'err-inputs'); valid = false;
-    } else { clearError('fg-inputs', 'err-inputs'); }
+    const sources = collectInputSources();
+    const errEl = document.getElementById('err-inputs');
+    if (sources === null || sources.length === 0) {
+      errEl.classList.add('field-error--visible'); valid = false;
+    } else {
+      errEl.classList.remove('field-error--visible');
+    }
     if (valid) {
-      state.inputs = inputs;
+      state.inputSources = sources;
+      state.inputs = sources.map(s => `${s.tool}${s.data ? ': ' + s.data : ''}`).join('\n');
       initStepsIfEmpty();
       showStep(4);
     }
@@ -1573,12 +1730,18 @@ function nextStep(n) {
   }
 
   else if (n === 5) {
-    const output = document.getElementById('task-output').value.trim();
-    if (output.length < 30) {
-      showError('fg-output', 'err-output'); valid = false;
-    } else { clearError('fg-output', 'err-output'); }
+    const format = document.getElementById('output-format').value;
+    const dest = document.getElementById('output-dest').value.trim();
+    if (!format) { showError('fg-output-format', 'err-output-format'); valid = false; }
+    else { clearError('fg-output-format', 'err-output-format'); }
+    if (!dest) { showError('fg-output-dest', 'err-output-dest'); valid = false; }
+    else { clearError('fg-output-dest', 'err-output-dest'); }
     if (valid) {
-      state.output = output;
+      const recipient = document.getElementById('output-recipient').value.trim();
+      state.outputFormat = format;
+      state.outputDest = dest;
+      state.outputRecipient = recipient;
+      state.output = `${format} → ${dest}${recipient ? ' (to: ' + recipient + ')' : ''}`;
       showStep(6);
     }
   }
@@ -1617,16 +1780,144 @@ function nextStep(n) {
   }
 }
 
-// ─── Trigger placeholder ───
-function updateTriggerPlaceholder() {
+// ─── Trigger fields ───
+function updateTriggerFields() {
   const type = document.getElementById('trigger-type').value;
-  const input = document.getElementById('trigger-desc');
-  const placeholders = {
-    'time-based': '"Every Monday at 8am" or "On the 1st of each month"',
-    'event-based': '"When a new row is added to a Google Sheet" or "When a form is submitted in HubSpot"',
-    'manually-triggered': '"When I decide to send the weekly update" or "Before each client meeting"'
-  };
-  input.placeholder = placeholders[type] || 'Describe the trigger specifically…';
+
+  // Populate the event tool select on first reveal
+  const evtSelect = document.getElementById('trigger-event-tool');
+  if (evtSelect && !evtSelect.dataset.populated) {
+    evtSelect.innerHTML = toolOptions();
+    evtSelect.dataset.populated = '1';
+  }
+
+  document.getElementById('trigger-fields-time').classList.toggle('hidden', type !== 'time-based');
+  document.getElementById('trigger-fields-event').classList.toggle('hidden', type !== 'event-based');
+  document.getElementById('trigger-fields-manual').classList.toggle('hidden', type !== 'manually-triggered');
+}
+
+// ─── Tool select: "Other" reveals text input ───
+function handleToolSelectChange(el) {
+  const wrapper = el.closest('.tool-select-wrapper');
+  if (!wrapper) return;
+  const otherInput = wrapper.querySelector('.tool-other-input');
+  if (otherInput) otherInput.style.display = el.value === 'Other' ? 'block' : 'none';
+}
+
+function getToolSelectValue(el) {
+  if (!el) return '';
+  if (el.value === 'Other') {
+    const wrapper = el.closest('.tool-select-wrapper');
+    if (wrapper) {
+      const otherInput = wrapper.querySelector('.tool-other-input');
+      return (otherInput && otherInput.value.trim()) ? otherInput.value.trim() : 'Other';
+    }
+  }
+  return el.value;
+}
+
+// ─── Judgment explain field ───
+function handleJudgmentChange(el, id) {
+  const group = document.getElementById(`fg-step-judgment-explain-${id}`);
+  if (group) {
+    const show = el.value === 'mostly_judgment' || el.value === 'fully_judgment';
+    group.style.display = show ? 'block' : 'none';
+  }
+}
+
+// ─── Step 3 — input sources ───
+let sourceIdCounter = 0;
+
+function initSourcesIfEmpty() {
+  if (document.getElementById('input-sources-list').children.length === 0) {
+    addInputSource();
+  }
+}
+
+function addInputSource() {
+  sourceIdCounter++;
+  const id = sourceIdCounter;
+  const list = document.getElementById('input-sources-list');
+  const num = list.children.length + 1;
+
+  const block = document.createElement('div');
+  block.className = 'process-step-block';
+  block.dataset.sourceId = id;
+  block.innerHTML = `
+    <div class="process-step-block__header">
+      <span class="process-step-block__num">Source ${num}</span>
+      ${num > 1
+        ? `<button class="process-step-block__delete" onclick="removeInputSource(${id})" title="Remove source">×</button>`
+        : '<span></span>'}
+    </div>
+    <div class="process-step-block__fields">
+      <div class="field-group fg-source-tool-${id}">
+        <label>Which tool or system?</label>
+        <div class="tool-select-wrapper">
+          <select class="source-tool-select" data-source="${id}" onchange="handleToolSelectChange(this)">
+            ${toolOptions()}
+          </select>
+          <input type="text" class="tool-other-input" placeholder="Type tool name…" style="display:none;margin-top:8px;" />
+        </div>
+        <p class="field-error err-source-tool-${id}">Select a tool.</p>
+      </div>
+      <div class="field-group">
+        <label>What data or fields? <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+        <input type="text" class="source-data-input" data-source="${id}" placeholder='e.g., "All deals closed this week, rep name, amount"' />
+      </div>
+    </div>
+  `;
+  list.appendChild(block);
+  renumberSources();
+}
+
+function removeInputSource(id) {
+  const list = document.getElementById('input-sources-list');
+  if (list.children.length <= 1) return;
+  const block = list.querySelector(`[data-source-id="${id}"]`);
+  if (block) { block.remove(); renumberSources(); }
+}
+
+function renumberSources() {
+  const list = document.getElementById('input-sources-list');
+  Array.from(list.children).forEach((block, i) => {
+    const label = block.querySelector('.process-step-block__num');
+    if (label) label.textContent = `Source ${i + 1}`;
+  });
+}
+
+function collectInputSources() {
+  const list = document.getElementById('input-sources-list');
+  const blocks = Array.from(list.children);
+  let valid = true;
+  const sources = [];
+
+  blocks.forEach(block => {
+    const id = block.dataset.sourceId;
+    const toolEl = block.querySelector('.source-tool-select');
+    const dataEl = block.querySelector('.source-data-input');
+    const tool = getToolSelectValue(toolEl);
+    const data = dataEl ? dataEl.value.trim() : '';
+
+    if (!tool) {
+      if (toolEl) {
+        toolEl.closest('.field-group').classList.add('field--invalid');
+        const err = block.querySelector(`.err-source-tool-${id}`);
+        if (err) err.classList.add('field-error--visible');
+      }
+      valid = false;
+    } else {
+      if (toolEl) {
+        toolEl.closest('.field-group').classList.remove('field--invalid');
+        const err = block.querySelector(`.err-source-tool-${id}`);
+        if (err) err.classList.remove('field-error--visible');
+      }
+    }
+
+    sources.push({ tool, data });
+  });
+
+  return valid ? sources : null;
 }
 
 // ─── Step 4 — process steps ───
@@ -1666,7 +1957,7 @@ function addProcessStep() {
       </div>
       <div class="field-group fg-step-judgment-${id}">
         <label>How much judgment does this step require?</label>
-        <select class="step-judgment-select" data-step="${id}">
+        <select class="step-judgment-select" data-step="${id}" onchange="handleJudgmentChange(this, '${id}')">
           <option value="">Select…</option>
           <option value="fully_judgment">Fully judgment-based (requires human decision-making every time)</option>
           <option value="mostly_judgment">Mostly judgment (human decides, but follows patterns)</option>
@@ -1674,6 +1965,45 @@ function addProcessStep() {
           <option value="fully_routine">Fully routine (same action every time, no decisions)</option>
         </select>
         <p class="field-error err-step-judgment-${id}">Select a judgment level for this step.</p>
+      </div>
+    </div>
+    <div class="field-group fg-step-judgment-explain-${id}" id="fg-step-judgment-explain-${id}" style="display:none;margin-top:12px;">
+      <label>What is the judgment being made?</label>
+      <input type="text" class="step-judgment-explain-input" data-step="${id}" placeholder='e.g., "Deciding which leads to prioritize based on fit"' />
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-2);">
+      <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Data transfer</p>
+      <div class="process-step-block__fields">
+        <div class="field-group fg-step-from-tool-${id}">
+          <label>Data comes from</label>
+          <div class="tool-select-wrapper">
+            <select class="step-from-tool-select" data-step="${id}" onchange="handleToolSelectChange(this)">
+              ${toolOptions()}
+            </select>
+            <input type="text" class="tool-other-input" placeholder="Type tool name…" style="display:none;margin-top:8px;" />
+          </div>
+          <p class="field-error err-step-from-tool-${id}">Select the source tool for this step.</p>
+        </div>
+        <div class="field-group">
+          <label>Which data / fields? <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+          <input type="text" class="step-from-data-input" data-step="${id}" placeholder='e.g., "Deal name, amount, close date"' />
+        </div>
+      </div>
+      <div class="process-step-block__fields" style="margin-top:10px;">
+        <div class="field-group fg-step-to-tool-${id}">
+          <label>Data goes to</label>
+          <div class="tool-select-wrapper">
+            <select class="step-to-tool-select" data-step="${id}" onchange="handleToolSelectChange(this)">
+              ${toolOptions()}
+            </select>
+            <input type="text" class="tool-other-input" placeholder="Type tool name…" style="display:none;margin-top:8px;" />
+          </div>
+          <p class="field-error err-step-to-tool-${id}">Select the destination tool for this step.</p>
+        </div>
+        <div class="field-group">
+          <label>What it produces <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+          <input type="text" class="step-to-data-input" data-step="${id}" placeholder='e.g., "Formatted email draft with deal table"' />
+        </div>
       </div>
     </div>
   `;
@@ -1758,7 +2088,49 @@ function collectStepData() {
       }
     }
 
-    steps.push({ name, who, judgment });
+    const fromToolEl = block.querySelector('.step-from-tool-select');
+    const fromDataEl = block.querySelector('.step-from-data-input');
+    const toToolEl = block.querySelector('.step-to-tool-select');
+    const toDataEl = block.querySelector('.step-to-data-input');
+
+    const fromTool = getToolSelectValue(fromToolEl);
+    const fromData = fromDataEl ? fromDataEl.value.trim() : '';
+    const toTool = getToolSelectValue(toToolEl);
+    const toData = toDataEl ? toDataEl.value.trim() : '';
+    const judgmentExplainEl = block.querySelector('.step-judgment-explain-input');
+    const judgmentExplain = judgmentExplainEl ? judgmentExplainEl.value.trim() : '';
+
+    if (!fromTool) {
+      if (fromToolEl) {
+        fromToolEl.closest('.field-group').classList.add('field--invalid');
+        const err = block.querySelector(`.err-step-from-tool-${id}`);
+        if (err) err.classList.add('field-error--visible');
+      }
+      valid = false;
+    } else {
+      if (fromToolEl) {
+        fromToolEl.closest('.field-group').classList.remove('field--invalid');
+        const err = block.querySelector(`.err-step-from-tool-${id}`);
+        if (err) err.classList.remove('field-error--visible');
+      }
+    }
+
+    if (!toTool) {
+      if (toToolEl) {
+        toToolEl.closest('.field-group').classList.add('field--invalid');
+        const err = block.querySelector(`.err-step-to-tool-${id}`);
+        if (err) err.classList.add('field-error--visible');
+      }
+      valid = false;
+    } else {
+      if (toToolEl) {
+        toToolEl.closest('.field-group').classList.remove('field--invalid');
+        const err = block.querySelector(`.err-step-to-tool-${id}`);
+        if (err) err.classList.remove('field-error--visible');
+      }
+    }
+
+    steps.push({ name, who, judgment, judgmentExplain, fromTool, fromData, toTool, toData });
   });
 
   return valid ? steps : null;
@@ -1816,7 +2188,7 @@ async function submitGate() {
   revealOutput(false);
 
   if (!supabaseOk && SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL') {
-    showToast("We couldn't save your info — your playbook is still ready below.");
+    showToast("We couldn't save your info — your automation manual is still ready below.");
   }
 }
 
@@ -1828,9 +2200,13 @@ function buildSupabasePayload(name, email) {
     task_description: state.taskDescription,
     trigger_type: state.triggerType,
     trigger_description: state.triggerDescription,
+    input_sources: state.inputSources,
     inputs: state.inputs,
     steps: state.processSteps,
     output: state.output,
+    output_format: state.outputFormat,
+    output_dest: state.outputDest,
+    output_recipient: state.outputRecipient,
     success_criteria: state.successCriteria,
     frequency: state.frequency,
     failure_cost: state.failureCost,
@@ -1863,7 +2239,7 @@ const TOOL_RATIONALE = {
   'Make': 'Visual workflow builder — best for multi-step automations with branching logic',
   'Zapier': 'Fastest setup for simple trigger → action flows between popular apps',
   'n8n': 'Self-hosted option with full code access — best for complex or custom workflows',
-  'Claude API': 'Best for steps that need reading, writing, summarizing, classifying, or judgment calls',
+  'AI / LLM API': 'Best for steps that need reading, writing, summarizing, classifying, or judgment calls',
   'Google Apps Script': 'Free option for Google Workspace automations — triggers, emails, Sheets',
   'Google Sheets API': 'Direct read/write to Sheets from any automation platform',
   'Google Docs API': 'Read and write Google Docs programmatically',
@@ -1910,7 +2286,7 @@ function recommendTools(step) {
     tools.push('Airtable'); tools.push('Make (Airtable module)');
   }
   if (/write|draft|summarize|classify|analyze|generate/.test(combined)) {
-    tools.push('Claude API');
+    tools.push('AI / LLM API');
   }
   if (/zapier/.test(combined)) {
     tools.push('Zapier');
@@ -1935,9 +2311,9 @@ function recommendTools(step) {
       const hasPlatform = tools.some(t => ['Make','Zapier','n8n','Google Apps Script'].includes(t) || t.startsWith('Make ('));
       if (!hasPlatform) tools.push('Make');
     }
-    if (judgment === 'mostly_routine') tools.push('Claude API');
+    if (judgment === 'mostly_routine') tools.push('AI / LLM API');
   } else if (judgment === 'mostly_judgment' || judgment === 'fully_judgment') {
-    if (!tools.includes('Claude API')) tools.push('Claude API');
+    if (!tools.includes('AI / LLM API')) tools.push('AI / LLM API');
     const hasPlatform = tools.some(t => ['Make','Zapier','n8n','Google Apps Script'].includes(t) || t.startsWith('Make ('));
     if (!hasPlatform) tools.push('Make');
   }
@@ -2054,10 +2430,37 @@ function buildOutput() {
         <span class="tool-pill__rationale">${escHtml(getToolRationale(t))}</span>
       </div>`).join('');
 
+    // chaining callout — routine steps reading from platforms with likely upstream processes
+    const chainableSources = new Set([
+      'HubSpot','Salesforce','Airtable','Notion','Google Sheets',
+      'Typeform / Form','Project tool (Asana / Monday / etc.)','Jira / GitHub',
+      'Slack','Gmail','Marketo'
+    ]);
+    const chainingNote = (isRoutine(step.judgment) && step.fromTool && chainableSources.has(step.fromTool))
+      ? `<p style="font-size:12px;color:var(--teal);margin-bottom:14px;line-height:1.5;padding:10px 12px;background:rgba(0,220,180,0.06);border:1px solid rgba(0,220,180,0.15);border-radius:6px;">⟳ <strong>Heads up:</strong> If the data this step reads from ${escHtml(step.fromTool)} is also being updated manually, that update process could be its own automation — and this one can be chained to run right after it.</p>`
+      : '';
+
     // judgment note for fully_judgment
     const judgmentNote = step.judgment === 'fully_judgment'
       ? `<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">This step involves significant judgment. Consider keeping a human in the loop with AI as a review assistant.</p>`
       : '';
+
+    const dataFlowHtml = (step.fromTool || step.toTool) ? `
+      <div style="display:flex;align-items:stretch;margin-bottom:18px;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+        <div style="flex:1;padding:12px 14px;background:var(--bg-2);">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:4px;">Data In</div>
+          <div style="font-size:13px;color:var(--cream);font-weight:500;">${escHtml(step.fromTool || '—')}</div>
+          ${step.fromData ? `<div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;">${escHtml(step.fromData)}</div>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;padding:0 12px;background:var(--bg);border-left:1px solid var(--border);border-right:1px solid var(--border);">
+          <span style="font-size:16px;background:var(--aurora);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">→</span>
+        </div>
+        <div style="flex:1;padding:12px 14px;background:var(--bg-2);">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--violet);margin-bottom:4px;">Data Out</div>
+          <div style="font-size:13px;color:var(--cream);font-weight:500;">${escHtml(step.toTool || '—')}</div>
+          ${step.toData ? `<div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;">${escHtml(step.toData)}</div>` : ''}
+        </div>
+      </div>` : '';
 
     card.innerHTML = `
       <div class="step-output-card__header">
@@ -2069,6 +2472,8 @@ function buildOutput() {
       </div>
       <span class="judgment-badge ${badgeClass}">${judgmentLabel(step.judgment)}</span>
       ${judgmentNote}
+      ${dataFlowHtml}
+      ${chainingNote}
       <div class="step-tools">
         <div class="step-tools__label">Recommended tools</div>
         <div class="tool-pills">${toolPillsHtml}</div>
@@ -2086,6 +2491,9 @@ function buildOutput() {
     `;
     container.appendChild(card);
   });
+
+  // Evals
+  buildEvalsContent();
 }
 
 function togglePrompt(id, btn) {
@@ -2116,9 +2524,9 @@ function copyPrompt(id, btn) {
   });
 }
 
-function copyPlaybook() {
+function copyManual() {
   const lines = [];
-  lines.push(`AUTOMATION PLAYBOOK — ${state.taskName}`);
+  lines.push(`AUTOMATION MANUAL — ${state.taskName}`);
   lines.push('');
   lines.push('TASK');
   lines.push(state.taskName);
@@ -2133,6 +2541,9 @@ function copyPlaybook() {
   lines.push('PROCESS STEPS');
   state.processSteps.forEach((s, i) => {
     lines.push(`${i+1}. ${s.name} (${s.who}) — ${judgmentLabel(s.judgment)}`);
+    if (s.fromTool || s.toTool) {
+      lines.push(`   Data: ${s.fromTool || '?'}${s.fromData ? ' (' + s.fromData + ')' : ''} → ${s.toTool || '?'}${s.toData ? ' (' + s.toData + ')' : ''}`);
+    }
   });
   lines.push('');
   lines.push('OUTPUT');
@@ -2152,7 +2563,7 @@ function copyPlaybook() {
 
   const text = lines.join('\n');
   navigator.clipboard.writeText(text).then(() => {
-    showToast('Playbook copied to clipboard.');
+    showToast('Automation manual copied to clipboard.');
   }).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -2160,8 +2571,84 @@ function copyPlaybook() {
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    showToast('Playbook copied to clipboard.');
+    showToast('Automation manual copied to clipboard.');
   });
+}
+
+// ─── Download manual as .md ───
+function downloadManual() {
+  const stepLines = state.processSteps.map((s, i) => {
+    let md = `### Step ${i+1} — ${s.name}\n`;
+    md += `- **Who:** ${s.who}\n`;
+    md += `- **Judgment:** ${judgmentLabel(s.judgment)}`;
+    if (s.judgmentExplain) md += ` — ${s.judgmentExplain}`;
+    md += '\n';
+    if (s.fromTool || s.toTool) {
+      md += `- **Data transfer:** ${s.fromTool || '?'}${s.fromData ? ' (' + s.fromData + ')' : ''} → ${s.toTool || '?'}${s.toData ? ' (' + s.toData + ')' : ''}\n`;
+    }
+    const tools = recommendTools(s);
+    if (tools.length) md += `- **Recommended tools:** ${tools.join(', ')}\n`;
+    return md;
+  }).join('\n');
+
+  const md = `# Automation Manual — ${state.taskName}
+
+## Task
+**${state.taskName}**
+${state.taskDescription}
+
+## Trigger
+${state.triggerType} — ${state.triggerDescription}
+
+## Data Sources
+${state.inputSources.map(s => `- **${s.tool}**${s.data ? ': ' + s.data : ''}`).join('\n')}
+
+## Process Steps
+
+${stepLines}
+## Output
+${state.output}
+
+## Success Criteria
+${state.successCriteria}
+
+## Operational Details
+- **Frequency:** ${state.frequency}
+- **If it fails:** ${state.failureCost}
+
+---
+*Built with Automation Process Builder — github.com/c-b-g-m/automation-process-builder*
+`;
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `automation-manual-${state.taskName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ─── Evals content ───
+function buildEvalsContent() {
+  const evalsEl = document.getElementById('evals-content');
+  if (!evalsEl) return;
+  evalsEl.innerHTML = `
+    <p style="font-size:14px;color:var(--cream-dim);margin-top:6px;margin-bottom:16px;line-height:1.6;">An automation that runs without you still needs to be checked. Evaluations are how you know it's working — and how you catch it when something breaks.</p>
+    <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Your success criteria</p>
+    <p style="font-size:13px;color:var(--cream-dim);margin-bottom:18px;font-style:italic;line-height:1.6;padding:12px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:6px;">${escHtml(state.successCriteria)}</p>
+    <p style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Before going live</p>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Run it manually once and verify the output matches your criteria exactly</span></li>
+      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Add an error notification step — automations fail silently if you don't build one in</span></li>
+      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Spot-check outputs weekly for the first month — edge cases surface slowly</span></li>
+      <li style="display:flex;gap:10px;font-size:13px;color:var(--cream-dim);line-height:1.5;"><span style="color:var(--teal);flex-shrink:0;margin-top:1px;">→</span><span>Document what "off" looks like, not just what "right" looks like</span></li>
+    </ul>
+    <!-- CUSTOMIZE: Replace or remove this closing line -->
+    <p style="font-size:13px;color:var(--cream-dim);line-height:1.6;">Find this tool useful? <a href="https://github.com/c-b-g-m/automation-process-builder" class="aurora-link" style="font-size:13px;">Star it on GitHub →</a></p>
+  `;
 }
 
 // ─── HTML escape ───
